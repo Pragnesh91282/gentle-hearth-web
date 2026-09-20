@@ -1,0 +1,141 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowLeft, HeartHandshake, MessageSquareHeart, ShieldCheck } from "lucide-react";
+
+const supportOptions = [
+  "I need someone to listen",
+  "I want practical coping tips",
+  "I need help with anxiety",
+  "I need emotional grounding",
+  "I want a short check-in",
+  "I need a free resource",
+];
+
+const exampleConcerns = [
+  "I feel overwhelmed and exhausted after work.",
+  "I keep overthinking and feel anxious at night.",
+  "I need a safe space to talk without pressure.",
+];
+
+export default function PatientsPage() {
+  const [selectedSupport, setSelectedSupport] = useState("I need someone to listen");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_28%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
+      <div className="mx-auto max-w-5xl">
+        <a href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </a>
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
+              <HeartHandshake className="h-3.5 w-3.5" />
+              For people seeking support
+            </div>
+
+            <h1 className="text-4xl font-black tracking-tight text-slate-900">Tell us what feels heavy right now.</h1>
+            <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
+              You are not asking for too much. Share a little about what you are carrying, and we will match you with a supportive doctor or guide who can respond gently and without pressure.
+            </p>
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+              <div>
+                <label className="mb-3 block text-sm font-semibold text-slate-700">What kind of support do you need?</label>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {supportOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option}
+                      onClick={() => setSelectedSupport(option)}
+                      className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
+                        selectedSupport === option
+                          ? "border-emerald-600 bg-emerald-50 text-emerald-800"
+                          : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">What would you like to share?</label>
+                <textarea
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  rows={6}
+                  placeholder="I feel overwhelmed and need help building a calmer routine."
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none ring-0 transition focus:border-emerald-300 focus:bg-white"
+                />
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="mb-2 text-sm font-semibold text-slate-700">Example concerns</p>
+                <div className="flex flex-wrap gap-2">
+                  {exampleConcerns.map((concern) => (
+                    <button
+                      type="button"
+                      key={concern}
+                      onClick={() => setMessage(concern)}
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-emerald-200 hover:text-emerald-700"
+                    >
+                      {concern}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800"
+              >
+                Send to a supportive guide
+              </button>
+            </form>
+
+            {submitted && (
+              <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                Your request has been prepared. A compassionate guidance team can review it and follow up with gentle, low-pressure support.
+              </div>
+            )}
+          </section>
+
+          <aside className="space-y-5">
+            <div className="rounded-[2rem] border border-slate-200 bg-slate-900 p-6 text-white shadow-xl">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-200">
+                  <MessageSquareHeart className="h-5 w-5" />
+                </div>
+                <p className="text-lg font-semibold">What you can expect</p>
+              </div>
+
+              <ul className="space-y-3 text-sm text-slate-200">
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Respectful listening with no pressure</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Affordable or free guidance options</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> A calm, nonjudgmental environment</li>
+              </ul>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Need immediate help?</p>
+              <p className="mt-4 text-base leading-7 text-slate-700">
+                If you are in crisis or feel unsafe, call or text 988 for free, confidential support right away.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  );
+}
