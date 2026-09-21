@@ -1,32 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CalendarCheck2, HeartHandshake, ShieldCheck, Star } from "lucide-react";
+import { ArrowLeft, CalendarCheck2, HeartHandshake, ShieldCheck } from "lucide-react";
+import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
-const doctorCards = [
-  {
-    name: "Dr. Aisha Khan",
-    specialty: "Stress, burnout, emotional resilience",
-    availability: "Open for low-cost check-ins",
-    rating: 4.9,
-    bio: "Helps people build sustainable routines and healthier emotional boundaries.",
-  },
-  {
-    name: "Dr. Nikhil Rao",
-    specialty: "Anxiety, panic patterns, daily coping",
-    availability: "Volunteer guidance slots available",
-    rating: 4.8,
-    bio: "Supports calm, practical routines for people seeking structure without pressure.",
-  },
-  {
-    name: "Dr. Leena Shah",
-    specialty: "Relationships, emotional overload, grief",
-    availability: "Affordable sessions available",
-    rating: 5.0,
-    bio: "Creates gentle conversation spaces for people who need understanding and clarity.",
-  },
-];
+type DoctorProfile = {
+  user_id: string;
+  credentials: string;
+  specialties: string[];
+  bio: string;
+  availability: string;
+  support_mode: string;
+};
 
 const offerings = [
   "Offer general emotional guidance and listening support",
@@ -36,7 +22,31 @@ const offerings = [
 ];
 
 export default function DoctorsPage() {
-  const [selected, setSelected] = useState(doctorCards[0].name);
+  const [doctorCards, setDoctorCards] = useState<DoctorProfile[]>([]);
+  const [selected, setSelected] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDoctorProfiles() {
+      const supabase = createSupabaseBrowserClient();
+      if (!supabase) {
+        setIsLoading(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("doctor_profiles")
+        .select("user_id, credentials, specialties, bio, availability, support_mode")
+        .eq("verification_status", "verified")
+        .order("created_at", { ascending: false });
+      const profiles = (data ?? []) as DoctorProfile[];
+      setDoctorCards(profiles);
+      setSelected(profiles[0]?.user_id ?? "");
+      setIsLoading(false);
+    }
+
+    void loadDoctorProfiles();
+  }, []);
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf8,_#edf8f5_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
@@ -79,29 +89,28 @@ export default function DoctorsPage() {
               </div>
 
               <div className="mt-6 space-y-4">
+                {isLoading && <p className="rounded-2xl bg-white p-4 text-sm text-slate-600">Loading verified profiles...</p>}
+                {!isLoading && doctorCards.length === 0 && <p className="rounded-2xl bg-white p-4 text-sm leading-6 text-slate-600">No verified professionals are available yet. Doctor profiles will appear here after credential review.</p>}
                 {doctorCards.map((doctor) => (
                   <button
                     type="button"
-                    key={doctor.name}
-                    onClick={() => setSelected(doctor.name)}
+                    key={doctor.user_id}
+                    onClick={() => setSelected(doctor.user_id)}
                     className={`w-full rounded-2xl border p-4 text-left transition ${
-                      selected === doctor.name
+                      selected === doctor.user_id
                         ? "border-emerald-500 bg-white shadow-sm"
                         : "border-slate-200 bg-white/60 hover:border-slate-300"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-slate-900">{doctor.name}</p>
-                        <p className="mt-1 text-xs font-medium text-emerald-700">{doctor.specialty}</p>
+                        <p className="font-semibold text-slate-900">Verified professional</p>
+                        <p className="mt-1 text-xs font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
                       </div>
-                      <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
-                        <Star className="h-3 w-3 fill-current" />
-                        {doctor.rating}
-                      </div>
+                      <ShieldCheck className="h-4 w-4 text-emerald-600" aria-label="Verified profile" />
                     </div>
 
-                    <p className="mt-3 text-xs text-slate-600">{doctor.availability}</p>
+                    <p className="mt-3 text-xs text-slate-600">{doctor.availability} · {doctor.support_mode}</p>
                   </button>
                 ))}
               </div>
@@ -111,18 +120,15 @@ export default function DoctorsPage() {
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {doctorCards.map((doctor) => (
-            <div key={doctor.name} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div key={doctor.user_id} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-xl font-bold text-slate-900">{doctor.name}</p>
-                <div className="inline-flex items-center gap-1 text-amber-500">
-                  <Star className="h-4 w-4 fill-current" />
-                  <span className="text-sm font-semibold text-slate-700">{doctor.rating}</span>
-                </div>
+                <p className="text-xl font-bold text-slate-900">Verified professional</p>
+                <ShieldCheck className="h-5 w-5 text-emerald-600" aria-label="Verified profile" />
               </div>
 
-              <p className="text-sm font-medium text-emerald-700">{doctor.specialty}</p>
+              <p className="text-sm font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
               <p className="mt-4 text-sm leading-7 text-slate-600">{doctor.bio}</p>
-              <div className="mt-5 rounded-2xl bg-slate-50 p-3 text-xs font-medium text-slate-700">{doctor.availability}</div>
+              <div className="mt-5 rounded-2xl bg-slate-50 p-3 text-xs font-medium text-slate-700">{doctor.availability} · {doctor.support_mode}</div>
             </div>
           ))}
         </div>

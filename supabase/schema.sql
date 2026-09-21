@@ -134,3 +134,17 @@ create policy "reporters view their reports" on public.reports for select to aut
 
 revoke all on all tables in schema public from anon;
 grant usage on schema public to authenticated;
+
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'support_requests') then
+    alter publication supabase_realtime add table public.support_requests;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'conversations') then
+    alter publication supabase_realtime add table public.conversations;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'messages') then
+    alter publication supabase_realtime add table public.messages;
+  end if;
+end;
+$$;

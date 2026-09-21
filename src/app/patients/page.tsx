@@ -148,6 +148,7 @@ export default function PatientsPage() {
             {submitted && (
               <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
                 Your request has been prepared. A compassionate guidance team can review it and follow up with gentle, low-pressure support.
+                <Link href="/inbox" className="mt-3 inline-flex font-semibold text-emerald-800 underline">Open your live inbox</Link>
               </div>
             )}
           </section>
