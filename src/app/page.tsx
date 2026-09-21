@@ -9,6 +9,7 @@ import {
   TimerReset,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 
 const supportAreas = [
   {
@@ -84,12 +85,14 @@ export default function Page() {
             </a>
           </nav>
 
-          <a
-            href="#join"
-            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
-          >
-            Join the space
-          </a>
+          <div className="flex items-center gap-3">
+            <Link href="/auth" className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 md:inline-flex">
+              Sign in
+            </Link>
+            <a href="#join" className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
+              Join the space
+            </a>
+          </div>
         </div>
       </header>
 
@@ -316,7 +319,9 @@ export default function Page() {
       <footer className="border-t border-slate-200 bg-white/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6 text-sm text-slate-600">
           <p>Gentle Hearth</p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-emerald-700">Privacy</Link>
+            <Link href="/terms" className="hover:text-emerald-700">Terms</Link>
             <TimerReset className="h-4 w-4 text-emerald-600" />
             <span>Support without pressure</span>
           </div>

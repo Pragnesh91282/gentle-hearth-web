@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowLeft, HeartHandshake, MessageSquareHeart, ShieldCheck } from "lucide-react";
 
 const supportOptions = [
@@ -22,19 +23,45 @@ export default function PatientsPage() {
   const [selectedSupport, setSelectedSupport] = useState("I need someone to listen");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consented, setConsented] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+    setSubmitted(false);
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/support-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ supportType: selectedSupport, message, consented }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error ?? "We could not send your request. Please try again.");
+        return;
+      }
+
+      setMessage("");
+      setSubmitted(true);
+    } catch {
+      setError("We could not reach the support service. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_28%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-5xl">
-        <a href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+        <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
           <ArrowLeft className="h-4 w-4" />
           Back to home
-        </a>
+        </Link>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
@@ -75,6 +102,8 @@ export default function PatientsPage() {
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   rows={6}
+                  required
+                  maxLength={2000}
                   placeholder="I feel overwhelmed and need help building a calmer routine."
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none ring-0 transition focus:border-emerald-300 focus:bg-white"
                 />
@@ -96,13 +125,25 @@ export default function PatientsPage() {
                 </div>
               </div>
 
+              <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
+                <input type="checkbox" checked={consented} onChange={(event) => setConsented(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
+                <span>I understand this is a peer-support pathway, not emergency care, diagnosis, or a replacement for a licensed treatment plan.</span>
+              </label>
+
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800"
+                disabled={isSubmitting}
+                className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Send to a supportive guide
+                {isSubmitting ? "Sending request..." : "Send to a supportive guide"}
               </button>
             </form>
+
+            {error && (
+              <div className="mt-6 whitespace-pre-line rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
+                {error}
+              </div>
+            )}
 
             {submitted && (
               <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
@@ -132,6 +173,7 @@ export default function PatientsPage() {
               <p className="mt-4 text-base leading-7 text-slate-700">
                 If you are in crisis or feel unsafe, call or text 988 for free, confidential support right away.
               </p>
+              <p className="mt-3 text-xs leading-5 text-slate-500">Outside the US, contact your local emergency number or visit findahelpline.com for country-specific crisis resources.</p>
             </div>
           </aside>
         </div>
