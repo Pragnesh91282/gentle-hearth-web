@@ -12,6 +12,9 @@ create index if not exists support_requests_patient_idx on public.support_reques
 create index if not exists conversations_patient_idx on public.conversations (patient_id);
 create index if not exists conversations_doctor_idx on public.conversations (doctor_id);
 create index if not exists messages_conversation_idx on public.messages (conversation_id, created_at);
+-- Rate limits count each member's recent rows (src/lib/rateLimit.ts).
+create index if not exists messages_sender_recent_idx on public.messages (sender_id, created_at desc);
+create index if not exists reports_reporter_recent_idx on public.reports (reporter_id, created_at desc);
 
 create or replace function public.is_moderator(candidate_id uuid)
 returns boolean language sql stable security definer set search_path = public as $$

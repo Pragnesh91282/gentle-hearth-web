@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { CRISIS_MESSAGE, detectCrisis, SUPPORT_OPTIONS } from "@/lib/safetyAndIdentity";
 import { jsonError, requireUser } from "@/lib/apiAuth";
+import { isRateLimited } from "@/lib/rateLimit";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -26,6 +27,11 @@ export async function POST(request: Request) {
     .eq("status", "open");
   if ((count ?? 0) >= 3) {
     return jsonError("You already have 3 open requests. A guide will reach out soon — you can follow them in your inbox.", 429);
+  }
+
+  // Stops open-then-withdraw loops that the open-request cap alone would allow.
+  if (await isRateLimited(admin, "support_requests", "patient_id", user.id, [{ seconds: 86400, max: 6 }])) {
+    return jsonError("You've sent several requests today. A guide will reach out soon — you can follow them in your inbox.", 429);
   }
 
   const isUrgent = detectCrisis(message);

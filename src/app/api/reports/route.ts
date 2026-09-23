@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { jsonError, requireUser } from "@/lib/apiAuth";
+import { isRateLimited } from "@/lib/rateLimit";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -23,6 +24,10 @@ export async function POST(request: Request) {
 
   if (!conversation || (conversation.patient_id !== user.id && conversation.doctor_id !== user.id)) {
     return jsonError("You cannot report this conversation.", 403);
+  }
+
+  if (await isRateLimited(admin, "reports", "reporter_id", user.id, [{ seconds: 86400, max: 10 }])) {
+    return jsonError("You've sent a lot of reports today. Moderators will review them soon.", 429);
   }
 
   let messageExcerpt: string | null = null;

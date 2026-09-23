@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  CalendarCheck2,
   HeartHandshake,
   MessageSquareHeart,
   ShieldCheck,
@@ -53,6 +52,12 @@ const communityQuestions = [
   },
 ];
 
+const verificationSteps = [
+  { title: "Apply with credentials", description: "Doctors and counsellors share their license or qualifications." },
+  { title: "Moderator review", description: "A moderator reviews every application before it is approved." },
+  { title: "Verified guides only", description: "Only approved guides can see and accept support requests." },
+];
+
 const doctorSupport = [
   "Offer general guidance and emotional support.",
   "Answer questions in a respectful, nonjudgmental way.",
@@ -97,8 +102,8 @@ export default function Page() {
 
           <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 text-left">
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-700">24/7</p>
-              <p className="mt-1 text-xs text-slate-600">Gentle check-ins</p>
+              <p className="text-2xl font-bold text-emerald-700">100%</p>
+              <p className="mt-1 text-xs text-slate-600">Credential-checked guides</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
               <p className="text-2xl font-bold text-emerald-700">Free</p>
@@ -119,7 +124,7 @@ export default function Page() {
             <div className="rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Today&apos;s gentle check-in</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Example conversation</p>
                   <h2 className="mt-3 text-2xl font-bold text-slate-900">What feels heavy today?</h2>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm">
@@ -195,7 +200,7 @@ export default function Page() {
       <section id="support" className="mx-auto max-w-6xl px-5 py-4">
         <div className="mb-10 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Support spaces</p>
-          <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">Common questions people bring to the community</h3>
+          <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">The kinds of things people bring here</h3>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
@@ -233,30 +238,29 @@ export default function Page() {
 
           <div className="rounded-3xl border border-emerald-200 bg-white p-6 shadow-inner">
             <div className="flex items-center justify-between">
-              <h4 className="text-lg font-semibold text-slate-900">Doctor availability</h4>
+              <h4 className="text-lg font-semibold text-slate-900">How guides are verified</h4>
               <div className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-                <CalendarCheck2 className="h-3.5 w-3.5" />
-                Flexible hours
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Verified only
               </div>
             </div>
 
-            <div className="mt-6 space-y-4">
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-slate-800">Dr. Aisha</p>
-                  <span className="text-xs font-medium text-emerald-700">Available this week</span>
-                </div>
-                <p className="mt-2 text-sm text-slate-600">Guidance for stress, sleep, and emotional overwhelm.</p>
-              </div>
+            <ol className="mt-6 space-y-4">
+              {verificationSteps.map((step, index) => (
+                <li key={step.title} className="flex gap-4 rounded-2xl border border-slate-200 p-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">{index + 1}</span>
+                  <div>
+                    <p className="font-semibold text-slate-800">{step.title}</p>
+                    <p className="mt-1 text-sm text-slate-600">{step.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
 
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-slate-800">Dr. Nikhil</p>
-                  <span className="text-xs font-medium text-emerald-700">Volunteer hours</span>
-                </div>
-                <p className="mt-2 text-sm text-slate-600">Low-cost consultations and listening support for anxiety.</p>
-              </div>
-            </div>
+            <Link href="/doctors" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:underline">
+              See verified guides
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -283,8 +287,13 @@ export default function Page() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white/80">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6 text-sm text-slate-600">
-          <p>Gentle Hearth</p>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-sm text-slate-600">
+          <div>
+            <p>Gentle Hearth</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Not an emergency service. In crisis? Call or text 988 (US) or find a local line at findahelpline.com.
+            </p>
+          </div>
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-emerald-700">Privacy</Link>
             <Link href="/terms" className="hover:text-emerald-700">Terms</Link>
