@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
 export default function AuthPage() {
@@ -38,7 +38,10 @@ export default function AuthPage() {
     } else if (mode === "sign-up") {
       setMessage("Account created. Check your email if confirmation is enabled, then sign in to continue.");
     } else {
-      router.push("/patients");
+      const next = new URLSearchParams(window.location.search).get("next");
+      // Only follow same-site paths so the link cannot redirect off-site.
+      router.push(next && /^\/(?![/\\])/.test(next) ? next : "/inbox");
+      router.refresh();
     }
 
     setIsSubmitting(false);
@@ -47,12 +50,7 @@ export default function AuthPage() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-md">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
-
-        <section className="mt-8 rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
+        <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
           <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
             <LockKeyhole className="h-5 w-5" />
           </div>

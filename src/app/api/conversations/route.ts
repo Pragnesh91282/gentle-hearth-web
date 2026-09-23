@@ -1,63 +1,39 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerAuthClient } from "@/lib/supabaseServerAuth";
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { jsonError, requireUser } from "@/lib/apiAuth";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const requestId = typeof body?.requestId === "string" ? body.requestId : "";
-  const authClient = await createSupabaseServerAuthClient();
-  const adminClient = getSupabaseServerClient();
-
-  if (!authClient || !adminClient) {
-    return NextResponse.json({ error: "Supabase is not configured yet." }, { status: 503 });
+  if (!requestId) {
+    return jsonError("Choose a request to accept.", 400);
   }
 
-  const { data: { user } } = await authClient.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
-  }
+  const { user, admin, response } = await requireUser();
+  if (response) return response;
 
-  const { data: doctor } = await adminClient
+  const { data: doctor } = await admin
     .from("doctor_profiles")
-    .select("user_id, verification_status")
+    .select("user_id")
     .eq("user_id", user.id)
     .eq("verification_status", "verified")
     .maybeSingle();
 
   if (!doctor) {
-    return NextResponse.json({ error: "Only verified doctors can accept support requests." }, { status: 403 });
+    return jsonError("Only verified doctors can accept support requests.", 403);
   }
 
-  const { data: supportRequest } = await adminClient
-    .from("support_requests")
-    .select("id, patient_id, status, claimed_by")
-    .eq("id", requestId)
-    .maybeSingle();
+  // Locks the request row, so concurrent claims cannot both succeed.
+  const { data: conversationId, error } = await admin.rpc("claim_support_request", {
+    p_request_id: requestId,
+    p_doctor_id: user.id,
+  });
 
-  if (!supportRequest || supportRequest.status !== "open" || supportRequest.claimed_by) {
-    return NextResponse.json({ error: "This request is no longer available." }, { status: 409 });
+  if (error) {
+    return jsonError("We could not start this conversation.", 500);
+  }
+  if (!conversationId) {
+    return jsonError("This request is no longer available.", 409);
   }
 
-  const { data: conversation, error: conversationError } = await adminClient
-    .from("conversations")
-    .insert({ request_id: requestId, patient_id: supportRequest.patient_id, doctor_id: user.id })
-    .select("id")
-    .single();
-
-  if (conversationError || !conversation) {
-    return NextResponse.json({ error: "We could not start this conversation." }, { status: 500 });
-  }
-
-  const { error: updateError } = await adminClient
-    .from("support_requests")
-    .update({ status: "claimed", claimed_by: user.id })
-    .eq("id", requestId)
-    .eq("status", "open");
-
-  if (updateError) {
-    await adminClient.from("conversations").delete().eq("id", conversation.id);
-    return NextResponse.json({ error: "We could not claim this request." }, { status: 500 });
-  }
-
-  return NextResponse.json({ conversationId: conversation.id }, { status: 201 });
+  return NextResponse.json({ conversationId }, { status: 201 });
 }

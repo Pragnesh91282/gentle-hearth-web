@@ -62,40 +62,6 @@ const doctorSupport = [
 export default function Page() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f7fbf8,_#eef6f2_35%,_#f8fafc_100%)] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/75 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-xl shadow-sm">
-              🌿
-            </div>
-            <div>
-              <p className="text-lg font-semibold tracking-tight text-emerald-900">Gentle Hearth</p>
-            </div>
-          </div>
-
-          <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a href="#about" className="transition hover:text-emerald-700">
-              About
-            </a>
-            <a href="#how-it-works" className="transition hover:text-emerald-700">
-              How it works
-            </a>
-            <a href="#support" className="transition hover:text-emerald-700">
-              Support
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link href="/auth" className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 md:inline-flex">
-              Sign in
-            </Link>
-            <a href="#join" className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
-              Join the space
-            </a>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-[1.15fr_0.85fr] md:py-24">
         <div className="flex flex-col justify-center">
           <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
@@ -114,19 +80,19 @@ export default function Page() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a
-              href="#join"
+            <Link
+              href="/patients"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white shadow-md transition hover:bg-emerald-800"
             >
               Ask for support
               <ArrowRight className="h-4 w-4" />
-            </a>
-            <a
-              href="#doctors"
+            </Link>
+            <Link
+              href="/doctors/apply"
               className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
             >
               I want to help
-            </a>
+            </Link>
           </div>
 
           <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 text-left">
@@ -306,12 +272,12 @@ export default function Page() {
             and real human connection.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <a href="#" className="rounded-full bg-white px-6 py-3 font-semibold text-emerald-800 transition hover:bg-emerald-50">
+            <Link href="/patients" className="rounded-full bg-white px-6 py-3 font-semibold text-emerald-800 transition hover:bg-emerald-50">
               Ask for support
-            </a>
-            <a href="#" className="rounded-full border border-white/50 px-6 py-3 font-semibold text-white transition hover:bg-white/5">
+            </Link>
+            <Link href="/doctors/apply" className="rounded-full border border-white/50 px-6 py-3 font-semibold text-white transition hover:bg-white/5">
               Offer guidance
-            </a>
+            </Link>
           </div>
         </div>
       </section>
