@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, HeartHandshake, MessageSquareHeart, ShieldCheck } from "lucide-react";
-
-const supportOptions = [
-  "I need someone to listen",
-  "I want practical coping tips",
-  "I need help with anxiety",
-  "I need emotional grounding",
-  "I want a short check-in",
-  "I need a free resource",
-];
+import { HeartHandshake, MessageSquareHeart, ShieldCheck } from "lucide-react";
+import CrisisResources from "@/components/CrisisResources";
+import { SUPPORT_OPTIONS } from "@/lib/safetyAndIdentity";
 
 const exampleConcerns = [
   "I feel overwhelmed and exhausted after work.",
@@ -26,11 +19,15 @@ export default function PatientsPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [consented, setConsented] = useState(false);
+  const [needsSignIn, setNeedsSignIn] = useState(false);
+  const [crisisMessage, setCrisisMessage] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(false);
     setError("");
+    setNeedsSignIn(false);
+    setCrisisMessage("");
     setIsSubmitting(true);
 
     try {
@@ -42,12 +39,14 @@ export default function PatientsPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error ?? "We could not send your request. Please try again.");
+        setNeedsSignIn(response.status === 401);
+        setError(response.status === 401 ? "Please sign in so a guide can reply to you privately. Your message is still here." : result.error ?? "We could not send your request. Please try again.");
         return;
       }
 
       setMessage("");
       setSubmitted(true);
+      setCrisisMessage(result.crisisMessage ?? "");
     } catch {
       setError("We could not reach the support service. Please try again.");
     } finally {
@@ -58,12 +57,7 @@ export default function PatientsPage() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_28%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-5xl">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
-
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
               <HeartHandshake className="h-3.5 w-3.5" />
@@ -79,7 +73,7 @@ export default function PatientsPage() {
               <div>
                 <label className="mb-3 block text-sm font-semibold text-slate-700">What kind of support do you need?</label>
                 <div className="grid gap-3 md:grid-cols-2">
-                  {supportOptions.map((option) => (
+                  {SUPPORT_OPTIONS.map((option) => (
                     <button
                       type="button"
                       key={option}
@@ -142,12 +136,15 @@ export default function PatientsPage() {
             {error && (
               <div className="mt-6 whitespace-pre-line rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
                 {error}
+                {needsSignIn && <Link href="/auth?next=/patients" className="mt-3 block font-semibold text-rose-900 underline">Sign in or create an account</Link>}
               </div>
             )}
 
+            {crisisMessage && <div className="mt-6"><CrisisResources message={crisisMessage} /></div>}
+
             {submitted && (
               <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                Your request has been prepared. A compassionate guidance team can review it and follow up with gentle, low-pressure support.
+                Your request was sent. Verified guides see it right away, and you&apos;ll get a live notification in your inbox when one of them replies.
                 <Link href="/inbox" className="mt-3 inline-flex font-semibold text-emerald-800 underline">Open your live inbox</Link>
               </div>
             )}

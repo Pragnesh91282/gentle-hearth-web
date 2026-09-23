@@ -1,38 +1,21 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerAuthClient } from "@/lib/supabaseServerAuth";
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { jsonError, requireUser } from "@/lib/apiAuth";
 
-export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+export async function PATCH(_request: Request, context: RouteContext<"/api/conversations/[id]">) {
   const { id } = await context.params;
-  const authClient = await createSupabaseServerAuthClient();
-  const adminClient = getSupabaseServerClient();
-  if (!authClient || !adminClient) {
-    return NextResponse.json({ error: "Supabase is not configured yet." }, { status: 503 });
-  }
+  const { user, admin, response } = await requireUser();
+  if (response) return response;
 
-  const { data: { user } } = await authClient.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
-  }
-
-  const { data: conversation } = await adminClient
-    .from("conversations")
-    .select("id, patient_id, doctor_id")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (!conversation || (conversation.patient_id !== user.id && conversation.doctor_id !== user.id)) {
-    return NextResponse.json({ error: "You cannot close this conversation." }, { status: 403 });
-  }
-
-  const { error } = await adminClient
-    .from("conversations")
-    .update({ status: "closed", closed_at: new Date().toISOString() })
-    .eq("id", id)
-    .eq("status", "active");
+  const { data: closed, error } = await admin.rpc("close_conversation", {
+    p_conversation_id: id,
+    p_user_id: user.id,
+  });
 
   if (error) {
-    return NextResponse.json({ error: "We could not close this conversation." }, { status: 500 });
+    return jsonError("We could not close this conversation.", 500);
+  }
+  if (!closed) {
+    return jsonError("This conversation is already closed or not yours to close.", 409);
   }
 
   return NextResponse.json({ ok: true });

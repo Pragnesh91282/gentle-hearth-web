@@ -23,9 +23,19 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { pathname, search } = request.nextUrl;
+  if (!user && PROTECTED_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
+    const signInUrl = new URL("/auth", request.url);
+    signInUrl.searchParams.set("next", `${pathname}${search}`);
+    return NextResponse.redirect(signInUrl);
+  }
+
   return response;
 }
+
+const PROTECTED_PATHS = ["/inbox", "/moderation", "/doctors/apply"];
 
 export const config = {
   matcher: [

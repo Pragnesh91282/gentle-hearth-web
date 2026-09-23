@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CalendarCheck2, HeartHandshake, ShieldCheck } from "lucide-react";
+import { ArrowRight, CalendarCheck2, HeartHandshake, ShieldCheck } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
 type DoctorProfile = {
@@ -51,12 +51,7 @@ export default function DoctorsPage() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf8,_#edf8f5_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-6xl">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
-
-        <div className="mt-8 rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
+        <div className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
             <HeartHandshake className="h-3.5 w-3.5" />
             For doctors and guides
@@ -77,6 +72,11 @@ export default function DoctorsPage() {
                   </div>
                 ))}
               </div>
+
+              <Link href="/doctors/apply" className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800">
+                Apply to offer guidance
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
 
             <div className="rounded-[2rem] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6">

@@ -30,18 +30,24 @@ export function generateIdentity(): AnonymousIdentity {
 }
 
 const CRISIS_PATTERNS = [
-  /\b(kill myself|suicide|end my life|want to die|self harm|slit|overdose)\b/i,
-  /\b(hang myself|take my own life|end it all|can't go on anymore)\b/i
+  /\b(kill myself|suicide|suicidal|end my life|want to die|self[- ]harm|hurt myself|slit|overdose)\b/i,
+  /\b(hang myself|take my own life|end it all|can't go on anymore|cant go on anymore)\b/i
 ];
 
-export function evaluateSafety(text: string) {
-  for (const pattern of CRISIS_PATTERNS) {
-    if (pattern.test(text)) {
-      return {
-        isValid: false,
-        message: "It sounds like you're carrying a heavy burden. Immediate free support is available:\n\n• Call or Text: 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)"
-      };
-    }
-  }
-  return { isValid: true, message: "" };
+export const CRISIS_MESSAGE =
+  "It sounds like you're carrying a heavy burden. Your message was sent and marked urgent, but please reach out for immediate free support too:\n\n• Call or Text: 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)\n• Outside the US: your local emergency number or findahelpline.com";
+
+// Crisis language is never rejected: the text is saved, flagged urgent, and
+// the sender is shown crisis resources alongside the normal flow.
+export function detectCrisis(text: string) {
+  return CRISIS_PATTERNS.some((pattern) => pattern.test(text));
 }
+
+export const SUPPORT_OPTIONS = [
+  "I need someone to listen",
+  "I want practical coping tips",
+  "I need help with anxiety",
+  "I need emotional grounding",
+  "I want a short check-in",
+  "I need a free resource",
+];
