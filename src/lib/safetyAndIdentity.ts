@@ -34,8 +34,11 @@ const CRISIS_PATTERNS = [
   /\b(hang myself|take my own life|end it all|can't go on anymore|cant go on anymore)\b/i
 ];
 
+// India launch: Tele-MANAS is the government's free 24/7 mental-health line.
+export const CRISIS_LINES = "Tele-MANAS: call 14416 or 1-800-891-4416 (free, 24/7). Emergency: call 112.";
+
 export const CRISIS_MESSAGE =
-  "It sounds like you're carrying a heavy burden. Your message was sent and marked urgent, but please reach out for immediate free support too:\n\n• Call or Text: 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)\n• Outside the US: your local emergency number or findahelpline.com";
+  "It sounds like you're carrying a heavy burden. Your message was sent and marked urgent, but please reach out for immediate free support too:\n\n• Tele-MANAS: call 14416 or 1-800-891-4416 (free, 24/7, Government of India)\n• Emergency: call 112\n• Outside India: your local emergency number or findahelpline.com";
 
 // Crisis language is never rejected: the text is saved, flagged urgent, and
 // the sender is shown crisis resources alongside the normal flow.

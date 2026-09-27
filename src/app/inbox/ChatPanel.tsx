@@ -4,8 +4,11 @@ import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { AlertTriangle, ArrowLeft, CheckCircle2, Flag, Send } from "lucide-react";
 import CrisisResources from "@/components/CrisisResources";
+import { GUIDE_TYPES } from "@/lib/guides";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
-import type { Conversation, Message, Profile } from "@/lib/types";
+import type { Conversation, DoctorProfile, Message, Profile } from "@/lib/types";
+
+type GuideDetails = Pick<DoctorProfile, "guide_type" | "full_name" | "registration_council" | "registration_number">;
 
 type Props = {
   me: Profile;
@@ -35,6 +38,7 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
   const [confirmingClose, setConfirmingClose] = useState(false);
   // undefined = form hidden; null = report the conversation; string = report one message.
   const [reportTarget, setReportTarget] = useState<string | null | undefined>(undefined);
+  const [guide, setGuide] = useState<GuideDetails | null>(null);
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const lastTypingSent = useRef(0);
@@ -43,6 +47,18 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
 
   const isActive = conversation.status === "active";
   const isDoctor = conversation.doctor_id === me.id;
+
+  // Who the guide is and what they may offer, shown to both participants.
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    if (!supabase) return;
+    void supabase
+      .from("doctor_profiles")
+      .select("guide_type, full_name, registration_council, registration_number")
+      .eq("user_id", conversation.doctor_id)
+      .maybeSingle()
+      .then(({ data }) => setGuide(data as GuideDetails | null));
+  }, [conversation.doctor_id]);
 
   // Private channel for presence and typing; access is limited to the two
   // participants by the realtime.messages policies in supabase/portal.sql.
@@ -155,6 +171,8 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
         </div>
       </div>
 
+      {guide && <GuideNotice guide={guide} isDoctor={isDoctor} />}
+
       {confirmingClose && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-sm">
           <span>End this conversation? Neither of you will be able to send more messages.</span>
@@ -233,6 +251,22 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
         </p>
       )}
     </div>
+  );
+}
+
+function GuideNotice({ guide, isDoctor }: { guide: GuideDetails; isDoctor: boolean }) {
+  const { label, scope, registration } = GUIDE_TYPES[guide.guide_type];
+  return (
+    <p className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3 text-xs leading-5 text-emerald-950">
+      {isDoctor ? (
+        <>You&apos;re supporting this member as a <span className="font-semibold">{label.toLowerCase()}</span>. {scope}</>
+      ) : (
+        <>
+          <span className="font-semibold">{registration && guide.full_name ? `${guide.full_name}, ${label.toLowerCase()}` : label}</span>
+          {registration && ` (${guide.registration_council} reg. no. ${guide.registration_number})`}. {scope}
+        </>
+      )}
+    </p>
   );
 }
 

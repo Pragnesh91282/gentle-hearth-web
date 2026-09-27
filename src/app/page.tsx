@@ -9,6 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { CRISIS_LINES } from "@/lib/safetyAndIdentity";
 
 const supportAreas = [
   {
@@ -53,9 +54,9 @@ const communityQuestions = [
 ];
 
 const verificationSteps = [
-  { title: "Apply with credentials", description: "Doctors and counsellors share their license or qualifications." },
-  { title: "Moderator review", description: "A moderator reviews every application before it is approved." },
-  { title: "Verified guides only", description: "Only approved guides can see and accept support requests." },
+  { title: "Apply as a doctor, psychologist, or listener", description: "Doctors share their NMC or State Medical Council registration, clinical psychologists their RCI registration, and listeners their training." },
+  { title: "Checked against the register", description: "A moderator looks up every doctor and psychologist on the official register before approving them." },
+  { title: "Clear roles", description: "You always see what kind of guide you're talking to. Listeners offer emotional support only, never medical advice." },
 ];
 
 const doctorSupport = [
@@ -102,8 +103,8 @@ export default function Page() {
 
           <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 text-left">
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-700">100%</p>
-              <p className="mt-1 text-xs text-slate-600">Credential-checked guides</p>
+              <p className="text-2xl font-bold text-emerald-700">Every</p>
+              <p className="mt-1 text-xs text-slate-600">guide reviewed by a moderator</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
               <p className="text-2xl font-bold text-emerald-700">Free</p>
@@ -291,12 +292,13 @@ export default function Page() {
           <div>
             <p>Gentle Hearth</p>
             <p className="mt-1 text-xs text-slate-500">
-              Not an emergency service. In crisis? Call or text 988 (US) or find a local line at findahelpline.com.
+              Not an emergency service. In crisis? {CRISIS_LINES}
             </p>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-emerald-700">Privacy</Link>
             <Link href="/terms" className="hover:text-emerald-700">Terms</Link>
+            <Link href="/grievance" className="hover:text-emerald-700">Grievances</Link>
             <TimerReset className="h-4 w-4 text-emerald-600" />
             <span>Support without pressure</span>
           </div>

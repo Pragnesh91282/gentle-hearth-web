@@ -35,7 +35,7 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-const PROTECTED_PATHS = ["/inbox", "/moderation", "/doctors/apply"];
+const PROTECTED_PATHS = ["/inbox", "/moderation", "/doctors/apply", "/account"];
 
 export const config = {
   matcher: [

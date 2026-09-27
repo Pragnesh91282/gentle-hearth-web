@@ -121,7 +121,7 @@ export default function PatientsPage() {
 
               <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
                 <input type="checkbox" checked={consented} onChange={(event) => setConsented(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
-                <span>I understand this is a peer-support pathway, not emergency care, diagnosis, or a replacement for a licensed treatment plan.</span>
+                <span>I am 18 or older, and I understand this is a peer-support pathway, not emergency care, diagnosis, or a replacement for a licensed treatment plan.</span>
               </label>
 
               <button
@@ -169,9 +169,9 @@ export default function PatientsPage() {
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Need immediate help?</p>
               <p className="mt-4 text-base leading-7 text-slate-700">
-                If you are in crisis or feel unsafe, call or text 988 for free, confidential support right away.
+                If you are in crisis or feel unsafe, call Tele-MANAS on 14416 for free, confidential support right away, 24/7. In an emergency, call 112.
               </p>
-              <p className="mt-3 text-xs leading-5 text-slate-500">Outside the US, contact your local emergency number or visit findahelpline.com for country-specific crisis resources.</p>
+              <p className="mt-3 text-xs leading-5 text-slate-500">Outside India, contact your local emergency number or visit findahelpline.com for country-specific crisis resources.</p>
             </div>
           </aside>
         </div>

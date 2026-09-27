@@ -3,16 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CalendarCheck2, HeartHandshake, ShieldCheck } from "lucide-react";
+import { GUIDE_TYPES } from "@/lib/guides";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
+import type { DoctorProfile as FullDoctorProfile } from "@/lib/types";
 
-type DoctorProfile = {
-  user_id: string;
-  credentials: string;
-  specialties: string[];
-  bio: string;
-  availability: string;
-  support_mode: string;
-};
+type DoctorProfile = Omit<FullDoctorProfile, "verification_status" | "created_at">;
+
+// Registered professionals are named with their registration, as the
+// Telemedicine Practice Guidelines require; listeners stay anonymous.
+function guideTitle(doctor: DoctorProfile) {
+  return GUIDE_TYPES[doctor.guide_type].registration && doctor.full_name ? doctor.full_name : GUIDE_TYPES[doctor.guide_type].label;
+}
+
+function guideSubtitle(doctor: DoctorProfile) {
+  const { label, registration } = GUIDE_TYPES[doctor.guide_type];
+  return registration ? `${label} · ${doctor.registration_council} reg. no. ${doctor.registration_number}` : label;
+}
 
 const offerings = [
   "Offer general emotional guidance and listening support",
@@ -36,7 +42,7 @@ export default function DoctorsPage() {
 
       const { data } = await supabase
         .from("doctor_profiles")
-        .select("user_id, credentials, specialties, bio, availability, support_mode")
+        .select("user_id, credentials, specialties, bio, availability, support_mode, guide_type, full_name, registration_council, registration_number")
         .eq("verification_status", "verified")
         .order("created_at", { ascending: false });
       const profiles = (data ?? []) as DoctorProfile[];
@@ -90,7 +96,7 @@ export default function DoctorsPage() {
 
               <div className="mt-6 space-y-4">
                 {isLoading && <p className="rounded-2xl bg-white p-4 text-sm text-slate-600">Loading verified profiles...</p>}
-                {!isLoading && doctorCards.length === 0 && <p className="rounded-2xl bg-white p-4 text-sm leading-6 text-slate-600">No verified professionals are available yet. Doctor profiles will appear here after credential review.</p>}
+                {!isLoading && doctorCards.length === 0 && <p className="rounded-2xl bg-white p-4 text-sm leading-6 text-slate-600">No verified guides are available yet. Profiles appear here after moderator review.</p>}
                 {doctorCards.map((doctor) => (
                   <button
                     type="button"
@@ -104,7 +110,8 @@ export default function DoctorsPage() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-slate-900">Verified professional</p>
+                        <p className="font-semibold text-slate-900">{guideTitle(doctor)}</p>
+                        <p className="mt-1 text-xs text-slate-500">{guideSubtitle(doctor)}</p>
                         <p className="mt-1 text-xs font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
                       </div>
                       <ShieldCheck className="h-4 w-4 text-emerald-600" aria-label="Verified profile" />
@@ -122,9 +129,11 @@ export default function DoctorsPage() {
           {doctorCards.map((doctor) => (
             <div key={doctor.user_id} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-xl font-bold text-slate-900">Verified professional</p>
+                <p className="text-xl font-bold text-slate-900">{guideTitle(doctor)}</p>
                 <ShieldCheck className="h-5 w-5 text-emerald-600" aria-label="Verified profile" />
               </div>
+              <p className="mb-2 text-xs text-slate-500">{guideSubtitle(doctor)}</p>
+              <p className="mb-3 text-xs leading-5 text-slate-600">{GUIDE_TYPES[doctor.guide_type].scope}</p>
 
               <p className="text-sm font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
               <p className="mt-4 text-sm leading-7 text-slate-600">{doctor.bio}</p>

@@ -32,20 +32,26 @@ export async function POST(request: Request) {
 
   let messageExcerpt: string | null = null;
   if (messageId) {
-    const { data: reported } = await admin
+    const { data: reportedMessage } = await admin
       .from("messages")
       .select("body")
       .eq("id", messageId)
       .eq("conversation_id", conversationId)
       .maybeSingle();
-    if (!reported) {
+    if (!reportedMessage) {
       return jsonError("That message is not part of this conversation.", 400);
     }
-    messageExcerpt = reported.body;
+    messageExcerpt = reportedMessage.body;
   }
+
+  // Copied so the report still names who it was about if that account is deleted.
+  const otherId = conversation.patient_id === user.id ? conversation.doctor_id : conversation.patient_id;
+  const { data: reported } = await admin.from("profiles").select("display_name").eq("id", otherId).maybeSingle();
 
   const { error } = await admin.from("reports").insert({
     reporter_id: user.id,
+    reported_user_id: otherId,
+    reported_name: reported?.display_name ?? null,
     conversation_id: conversationId,
     message_id: messageId,
     message_excerpt: messageExcerpt,
@@ -57,7 +63,6 @@ export async function POST(request: Request) {
   }
 
   if (block) {
-    const otherId = conversation.patient_id === user.id ? conversation.doctor_id : conversation.patient_id;
     await admin.from("blocks").upsert({ blocker_id: user.id, blocked_id: otherId }, { ignoreDuplicates: true });
     await admin.rpc("close_conversation", { p_conversation_id: conversationId, p_user_id: user.id });
   }

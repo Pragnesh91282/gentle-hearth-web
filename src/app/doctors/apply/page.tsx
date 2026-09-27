@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { BadgeCheck, Clock3, Stethoscope, XCircle } from "lucide-react";
+import { GUIDE_TYPES, type GuideType } from "@/lib/guides";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 import type { DoctorProfile } from "@/lib/types";
@@ -16,6 +17,10 @@ const STATUS_COPY = {
 export default function DoctorApplyPage() {
   const member = useMember();
   const [application, setApplication] = useState<DoctorProfile | null>(null);
+  const [guideType, setGuideType] = useState<GuideType>("listener");
+  const [fullName, setFullName] = useState("");
+  const [registrationCouncil, setRegistrationCouncil] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
   const [credentials, setCredentials] = useState("");
   const [specialties, setSpecialties] = useState("");
   const [bio, setBio] = useState("");
@@ -39,13 +44,17 @@ export default function DoctorApplyPage() {
 
     void supabase
       .from("doctor_profiles")
-      .select("user_id, credentials, specialties, bio, availability, support_mode, verification_status, created_at")
+      .select("user_id, credentials, specialties, bio, availability, support_mode, verification_status, guide_type, full_name, registration_council, registration_number, created_at")
       .eq("user_id", userId)
       .maybeSingle()
       .then(({ data }) => {
         if (!data) return;
         const profile = data as DoctorProfile;
         setApplication(profile);
+        setGuideType(profile.guide_type);
+        setFullName(profile.full_name ?? "");
+        setRegistrationCouncil(profile.registration_council ?? "");
+        setRegistrationNumber(profile.registration_number ?? "");
         setCredentials(profile.credentials);
         setSpecialties(profile.specialties.join(", "));
         setBio(profile.bio);
@@ -66,7 +75,7 @@ export default function DoctorApplyPage() {
     const response = await fetch("/api/doctor-applications", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credentials, bio, availability, supportMode, specialties: specialtyList }),
+      body: JSON.stringify({ guideType, fullName, registrationCouncil, registrationNumber, credentials, bio, availability, supportMode, specialties: specialtyList }),
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -75,6 +84,10 @@ export default function DoctorApplyPage() {
       setApplication({
         user_id: userId ?? "",
         created_at: application?.created_at ?? new Date().toISOString(),
+        guide_type: guideType,
+        full_name: registration ? fullName : null,
+        registration_council: guideType === "psychologist" ? registration?.councilHint ?? null : registration ? registrationCouncil : null,
+        registration_number: registration ? registrationNumber : null,
         credentials,
         bio,
         availability,
@@ -87,6 +100,7 @@ export default function DoctorApplyPage() {
   }
 
   const status = application ? STATUS_COPY[application.verification_status] : null;
+  const registration = GUIDE_TYPES[guideType].registration;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf8,_#edf8f5_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
@@ -97,7 +111,7 @@ export default function DoctorApplyPage() {
           </div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">For doctors and guides</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight">{application ? "Your guide profile" : "Apply to offer guidance"}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">A moderator checks your credentials before you can accept requests. Patients see your specialties, bio, and availability, never your email.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">A moderator reviews every application before you can accept requests. Registered doctors and psychologists are checked against the official register, and patients see your name and registration number, as India&apos;s Telemedicine Practice Guidelines require. Patients never see your email.</p>
 
           {status && (
             <div role="status" className={`mt-6 flex items-start gap-3 rounded-2xl border p-4 text-sm ${status.tone}`}>
@@ -107,9 +121,42 @@ export default function DoctorApplyPage() {
           )}
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <fieldset>
+              <legend className="mb-2 block text-sm font-semibold text-slate-700">I am a</legend>
+              <div className="grid gap-2">
+                {(Object.keys(GUIDE_TYPES) as GuideType[]).map((type) => (
+                  <label key={type} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3 text-sm transition ${guideType === type ? "border-emerald-600 bg-emerald-50" : "border-slate-200 hover:border-slate-300"}`}>
+                    <input type="radio" name="guide-type" value={type} checked={guideType === type} onChange={() => setGuideType(type)} className="mt-1 accent-emerald-700" />
+                    <span>
+                      <span className="block font-semibold text-slate-800">{GUIDE_TYPES[type].label}</span>
+                      <span className="block text-xs leading-5 text-slate-600">{GUIDE_TYPES[type].scope}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            {registration && (
+              <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div>
+                  <label htmlFor="full-name" className="mb-2 block text-sm font-semibold text-slate-700">Full name as registered</label>
+                  <input id="full-name" required maxLength={120} value={fullName} onChange={(event) => setFullName(event.target.value)} className="field" />
+                </div>
+                {guideType === "doctor" && (
+                  <div>
+                    <label htmlFor="council" className="mb-2 block text-sm font-semibold text-slate-700">Medical council</label>
+                    <input id="council" required maxLength={120} value={registrationCouncil} onChange={(event) => setRegistrationCouncil(event.target.value)} className="field" placeholder={registration.councilHint} />
+                  </div>
+                )}
+                <div>
+                  <label htmlFor="registration-number" className="mb-2 block text-sm font-semibold text-slate-700">{registration.numberLabel}</label>
+                  <input id="registration-number" required maxLength={40} value={registrationNumber} onChange={(event) => setRegistrationNumber(event.target.value)} className="field" />
+                  <p className="mt-1 text-xs text-slate-500">A moderator will look this up on the {registration.registerName}. Changing it after verification sends your profile back for review.</p>
+                </div>
+              </div>
+            )}
             <div>
-              <label htmlFor="credentials" className="mb-2 block text-sm font-semibold text-slate-700">License or credentials</label>
-              <input id="credentials" required maxLength={500} value={credentials} onChange={(event) => setCredentials(event.target.value)} className="field" placeholder="e.g. Licensed Clinical Psychologist, State license #12345" />
+              <label htmlFor="credentials" className="mb-2 block text-sm font-semibold text-slate-700">{registration ? "Qualifications" : "Training or experience"}</label>
+              <input id="credentials" required maxLength={500} value={credentials} onChange={(event) => setCredentials(event.target.value)} className="field" placeholder={registration ? "e.g. MBBS, MD Psychiatry" : "e.g. Completed a peer-support or active-listening course"} />
               <p className="mt-1 text-xs text-slate-500">Changing this after verification sends your profile back for review.</p>
             </div>
             <div>

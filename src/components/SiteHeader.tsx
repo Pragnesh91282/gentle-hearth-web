@@ -17,6 +17,7 @@ export default function SiteHeader() {
     { href: "/doctors", label: "Doctors" },
     ...(member.status === "signed-in" ? [{ href: "/inbox", label: "Inbox" }] : []),
     ...(role === "moderator" ? [{ href: "/moderation", label: "Moderation" }] : []),
+    ...(member.status === "signed-in" ? [{ href: "/account", label: "Account" }] : []),
   ];
 
   async function signOut() {

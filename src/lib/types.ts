@@ -1,3 +1,5 @@
+import type { GuideType } from "@/lib/guides";
+
 export type Role = "patient" | "doctor" | "moderator";
 
 export type Profile = {
@@ -43,12 +45,18 @@ export type DoctorProfile = {
   availability: string;
   support_mode: string;
   verification_status: "pending" | "verified" | "rejected";
+  guide_type: GuideType;
+  full_name: string | null;
+  registration_council: string | null;
+  registration_number: string | null;
   created_at: string;
 };
 
 export type Report = {
   id: string;
-  reporter_id: string;
+  reporter_id: string | null;
+  reported_user_id: string | null;
+  reported_name: string | null;
   conversation_id: string | null;
   message_id: string | null;
   message_excerpt: string | null;

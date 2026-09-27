@@ -21,6 +21,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [isAdult, setIsAdult] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,6 +42,10 @@ export default function AuthPage() {
       setError("Please complete the quick security check first.");
       return;
     }
+    if (mode === "sign-up" && !isAdult) {
+      setError("Gentle Hearth is for people aged 18 or older. If you need help now, call Tele-MANAS on 14416.");
+      return;
+    }
     setIsSubmitting(true);
 
     const supabase = createSupabaseBrowserClient();
@@ -58,7 +63,8 @@ export default function AuthPage() {
           password,
           options: {
             captchaToken: captcha,
-            data: { display_name: displayName || undefined },
+            // Records the 18+ declaration made at sign-up.
+            data: { display_name: displayName || undefined, age_confirmed_at: new Date().toISOString() },
             // Confirmation links return to whichever domain the user signed up on.
             emailRedirectTo: `${window.location.origin}/auth`,
           },
@@ -111,6 +117,12 @@ export default function AuthPage() {
               <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
               <input id="password" type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} className="field" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} />
             </div>
+            {mode === "sign-up" && (
+              <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
+                <input type="checkbox" checked={isAdult} onChange={(event) => setIsAdult(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
+                <span>I am 18 or older. If you are under 18, please call Tele-MANAS on 14416 or talk to a trusted adult.</span>
+              </label>
+            )}
             <Turnstile key={captchaAttempt} onToken={setCaptchaToken} />
             <button type="submit" disabled={isSubmitting || needsCaptcha} className="w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
               {isSubmitting ? "Please wait..." : mode === "sign-in" ? "Sign in securely" : "Create account"}
