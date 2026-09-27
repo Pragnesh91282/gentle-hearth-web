@@ -38,10 +38,10 @@ const CRISIS_PATTERNS = [
 export const CRISIS_LINES = "Tele-MANAS: call 14416 or 1-800-891-4416 (free, 24/7). Emergency: call 112.";
 
 export const CRISIS_MESSAGE =
-  "It sounds like you're carrying a heavy burden. Your message was sent and marked urgent, but please reach out for immediate free support too:\n\n• Tele-MANAS: call 14416 or 1-800-891-4416 (free, 24/7, Government of India)\n• Emergency: call 112\n• Outside India: your local emergency number or findahelpline.com";
+  "It sounds like you're carrying something very heavy. Your message was sent, and a guide will reply in their own time. Gentle Hearth isn't set up for emergencies, so if you're thinking about ending your life or hurting yourself, please talk to someone right now:\n\n• Tele-MANAS: call 14416 or 1-800-891-4416 (free, 24/7, Government of India)\n• Emergency: call 112\n• Outside India: your local emergency number or findahelpline.com";
 
-// Crisis language is never rejected: the text is saved, flagged urgent, and
-// the sender is shown crisis resources alongside the normal flow.
+// Gentle Hearth is not a crisis service. Nothing is flagged or prioritised;
+// the writer alone is pointed to services that are built for emergencies.
 export function detectCrisis(text: string) {
   return CRISIS_PATTERNS.some((pattern) => pattern.test(text));
 }

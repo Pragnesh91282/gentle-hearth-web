@@ -37,18 +37,17 @@ export async function POST(request: Request) {
     return jsonError("You're sending messages very quickly. Please wait a moment, then try again.", 429);
   }
 
-  const isUrgent = detectCrisis(message);
   const { data: saved, error } = await admin
     .from("messages")
-    .insert({ conversation_id: conversationId, sender_id: user.id, body: message, is_urgent: isUrgent })
-    .select("id, conversation_id, sender_id, body, is_urgent, created_at")
+    .insert({ conversation_id: conversationId, sender_id: user.id, body: message })
+    .select("id, conversation_id, sender_id, body, created_at")
     .single();
 
   if (error || !saved) {
     return jsonError("We could not send that message.", 500);
   }
 
-  // Only the sender needs crisis resources; the other participant sees the urgent flag.
-  const showResources = isUrgent && conversation.patient_id === user.id;
+  // Only the member who wrote it is pointed to emergency services.
+  const showResources = conversation.patient_id === user.id && detectCrisis(message);
   return NextResponse.json({ message: saved, crisisMessage: showResources ? CRISIS_MESSAGE : undefined }, { status: 201 });
 }

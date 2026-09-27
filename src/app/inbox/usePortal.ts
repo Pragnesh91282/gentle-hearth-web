@@ -6,9 +6,9 @@ import type { Conversation, Message, Profile, SupportRequest } from "@/lib/types
 
 export type LiveStatus = "connecting" | "live" | "offline";
 
-const REQUEST_COLUMNS = "id, patient_id, support_type, message, status, is_urgent, created_at";
-const CONVERSATION_COLUMNS = "id, request_id, patient_id, doctor_id, status, created_at, support_requests(support_type, is_urgent)";
-const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, is_urgent, created_at";
+const REQUEST_COLUMNS = "id, patient_id, support_type, message, status, created_at";
+const CONVERSATION_COLUMNS = "id, request_id, patient_id, doctor_id, status, created_at, support_requests(support_type)";
+const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, created_at";
 
 // Alerts carry no message content, so nothing private shows on a lock screen.
 function notify(title: string) {
@@ -55,7 +55,7 @@ export function usePortal(me: Profile | null) {
     if (!supabase || !me) return;
 
     const requestQuery = me.role === "doctor"
-      ? supabase.from("support_requests").select(REQUEST_COLUMNS).eq("status", "open").order("is_urgent", { ascending: false }).order("created_at", { ascending: true })
+      ? supabase.from("support_requests").select(REQUEST_COLUMNS).eq("status", "open").order("created_at", { ascending: true })
       : supabase.from("support_requests").select(REQUEST_COLUMNS).eq("patient_id", me.id).order("created_at", { ascending: false }).limit(20);
 
     const [requestResult, conversationResult] = await Promise.all([
@@ -96,7 +96,7 @@ export function usePortal(me: Profile | null) {
       .channel(`portal-${me.id}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "support_requests" }, (payload) => {
         if (payload.eventType === "INSERT" && me.role === "doctor") {
-          notify((payload.new as SupportRequest).is_urgent ? "Urgent support request" : "New support request");
+          notify("New support request");
         }
         scheduleRefresh();
       })
