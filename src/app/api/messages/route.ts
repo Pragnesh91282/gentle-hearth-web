@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { CRISIS_MESSAGE, detectCrisis } from "@/lib/safetyAndIdentity";
 import { jsonError, requireUser } from "@/lib/apiAuth";
+import { isRateLimited } from "@/lib/rateLimit";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -26,6 +27,14 @@ export async function POST(request: Request) {
 
   if (conversation.status !== "active") {
     return jsonError("This conversation is closed.", 409);
+  }
+
+  const limited = await isRateLimited(admin, "messages", "sender_id", user.id, [
+    { seconds: 60, max: 15 },
+    { seconds: 3600, max: 200 },
+  ]);
+  if (limited) {
+    return jsonError("You're sending messages very quickly. Please wait a moment, then try again.", 429);
   }
 
   const isUrgent = detectCrisis(message);

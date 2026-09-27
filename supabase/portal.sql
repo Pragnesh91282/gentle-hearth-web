@@ -12,6 +12,9 @@ create index if not exists support_requests_patient_idx on public.support_reques
 create index if not exists conversations_patient_idx on public.conversations (patient_id);
 create index if not exists conversations_doctor_idx on public.conversations (doctor_id);
 create index if not exists messages_conversation_idx on public.messages (conversation_id, created_at);
+-- Rate limits count each member's recent rows (src/lib/rateLimit.ts).
+create index if not exists messages_sender_recent_idx on public.messages (sender_id, created_at desc);
+create index if not exists reports_reporter_recent_idx on public.reports (reporter_id, created_at desc);
 
 create or replace function public.is_moderator(candidate_id uuid)
 returns boolean language sql stable security definer set search_path = public as $$
@@ -136,3 +139,44 @@ begin
   end if;
 end;
 $$;
+
+-- Guide types (India): registered doctors (NMC / State Medical Council),
+-- registered clinical psychologists (RCI), and listeners. Existing guides
+-- start as listeners until they add registration details and are re-verified.
+alter table public.doctor_profiles add column if not exists guide_type text not null default 'listener';
+alter table public.doctor_profiles add column if not exists full_name text;
+alter table public.doctor_profiles add column if not exists registration_council text;
+alter table public.doctor_profiles add column if not exists registration_number text;
+alter table public.doctor_profiles add column if not exists registration_checked_at timestamptz;
+alter table public.doctor_profiles add column if not exists registration_checked_by uuid references public.profiles(id) on delete set null;
+
+alter table public.doctor_profiles drop constraint if exists doctor_profiles_guide_type_check;
+alter table public.doctor_profiles add constraint doctor_profiles_guide_type_check
+  check (guide_type in ('doctor', 'psychologist', 'listener'));
+alter table public.doctor_profiles drop constraint if exists doctor_profiles_registration_check;
+alter table public.doctor_profiles add constraint doctor_profiles_registration_check
+  check (guide_type = 'listener' or (full_name is not null and registration_council is not null and registration_number is not null));
+
+-- One registration number can back only one account.
+create unique index if not exists doctor_profiles_registration_idx
+  on public.doctor_profiles (lower(registration_council), lower(registration_number))
+  where registration_number is not null;
+
+-- Reports outlive the accounts, conversations, and messages they are about,
+-- so deleting an account cannot erase complaints against it.
+alter table public.reports alter column reporter_id drop not null;
+alter table public.reports drop constraint if exists reports_reporter_id_fkey;
+alter table public.reports add constraint reports_reporter_id_fkey
+  foreign key (reporter_id) references public.profiles(id) on delete set null;
+alter table public.reports drop constraint if exists reports_conversation_id_fkey;
+alter table public.reports add constraint reports_conversation_id_fkey
+  foreign key (conversation_id) references public.conversations(id) on delete set null;
+alter table public.reports drop constraint if exists reports_message_id_fkey;
+alter table public.reports add constraint reports_message_id_fkey
+  foreign key (message_id) references public.messages(id) on delete set null;
+-- Who was reported, with their name copied in case the account is deleted.
+alter table public.reports add column if not exists reported_user_id uuid;
+alter table public.reports drop constraint if exists reports_reported_user_id_fkey;
+alter table public.reports add constraint reports_reported_user_id_fkey
+  foreign key (reported_user_id) references public.profiles(id) on delete set null;
+alter table public.reports add column if not exists reported_name text;

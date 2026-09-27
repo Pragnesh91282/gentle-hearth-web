@@ -1,25 +1,51 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LockKeyhole } from "lucide-react";
+import Turnstile, { TURNSTILE_SITE_KEY } from "@/components/Turnstile";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
+import { useMember } from "@/lib/useMember";
+
+// Only follow same-site paths so the link cannot redirect off-site.
+function nextPath() {
+  const next = new URLSearchParams(window.location.search).get("next");
+  return next && /^\/(?![/\\])/.test(next) ? next : "/inbox";
+}
 
 export default function AuthPage() {
   const router = useRouter();
+  const member = useMember();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [isAdult, setIsAdult] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaAttempt, setCaptchaAttempt] = useState(0);
+  const needsCaptcha = Boolean(TURNSTILE_SITE_KEY) && !captchaToken;
+
+  // Covers returning from an email confirmation link, which signs the user in.
+  useEffect(() => {
+    if (member.status === "signed-in") router.replace(nextPath());
+  }, [member.status, router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
     setError("");
+    if (needsCaptcha) {
+      setError("Please complete the quick security check first.");
+      return;
+    }
+    if (mode === "sign-up" && !isAdult) {
+      setError("Gentle Hearth is for people aged 18 or older. If you need help now, call Tele-MANAS on 14416.");
+      return;
+    }
     setIsSubmitting(true);
 
     const supabase = createSupabaseBrowserClient();
@@ -29,18 +55,31 @@ export default function AuthPage() {
       return;
     }
 
+    const captcha = captchaToken || undefined;
     const result = mode === "sign-in"
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password, options: { data: { display_name: displayName || undefined } } });
+      ? await supabase.auth.signInWithPassword({ email, password, options: { captchaToken: captcha } })
+      : await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            captchaToken: captcha,
+            // Records the 18+ declaration made at sign-up.
+            data: { display_name: displayName || undefined, age_confirmed_at: new Date().toISOString() },
+            // Confirmation links return to whichever domain the user signed up on.
+            emailRedirectTo: `${window.location.origin}/auth`,
+          },
+        });
+
+    // Captcha tokens are single-use; get a fresh widget for the next attempt.
+    setCaptchaToken("");
+    setCaptchaAttempt((attempt) => attempt + 1);
 
     if (result.error) {
       setError(result.error.message);
     } else if (mode === "sign-up") {
       setMessage("Account created. Check your email if confirmation is enabled, then sign in to continue.");
     } else {
-      const next = new URLSearchParams(window.location.search).get("next");
-      // Only follow same-site paths so the link cannot redirect off-site.
-      router.push(next && /^\/(?![/\\])/.test(next) ? next : "/inbox");
+      router.push(nextPath());
       router.refresh();
     }
 
@@ -78,7 +117,14 @@ export default function AuthPage() {
               <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
               <input id="password" type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} className="field" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} />
             </div>
-            <button type="submit" disabled={isSubmitting} className="w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
+            {mode === "sign-up" && (
+              <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
+                <input type="checkbox" checked={isAdult} onChange={(event) => setIsAdult(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
+                <span>I am 18 or older. If you are under 18, please call Tele-MANAS on 14416 or talk to a trusted adult.</span>
+              </label>
+            )}
+            <Turnstile key={captchaAttempt} onToken={setCaptchaToken} />
+            <button type="submit" disabled={isSubmitting || needsCaptcha} className="w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
               {isSubmitting ? "Please wait..." : mode === "sign-in" ? "Sign in securely" : "Create account"}
             </button>
           </form>

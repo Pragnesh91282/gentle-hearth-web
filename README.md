@@ -55,7 +55,26 @@ Crisis language is never rejected. The request or message is saved and flagged *
 
 All writes go through the `/api` routes using the service role. Row-level security only allows reads, so safety checks, request limits, and claim/close state cannot be bypassed from the browser. Claiming a request is atomic (`claim_support_request`), so two doctors cannot accept the same request.
 
-`/inbox`, `/doctors/apply`, and `/moderation` redirect to `/auth` when signed out and return after sign-in.
+## Abuse protection
+
+- **Rate limits** (`src/lib/rateLimit.ts`), counted in the database so they hold across Vercel instances: 15 messages/minute and 200/hour per member; 6 support requests/day on top of the 3-open cap; 10 reports/day.
+- **CAPTCHA on sign-in and sign-up** with Cloudflare Turnstile through Supabase's built-in bot protection:
+  1. Create a free Turnstile widget at dash.cloudflare.com → Turnstile, adding your domains (for example `gentle-hearth-web.vercel.app` and `localhost`).
+  2. Put the **secret key** in Supabase → Authentication → Attack Protection → Enable Captcha protection → Cloudflare Turnstile.
+  3. Put the **site key** in `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (in `.env.local` and Vercel), then redeploy.
+
+  Without the site key the widget is hidden, which is fine locally as long as captcha is off in Supabase. Once captcha is on in Supabase, sign-in fails without the widget.
+
+`/inbox`, `/doctors/apply`, `/moderation`, and `/account` redirect to `/auth` when signed out and return after sign-in.
+
+## India launch basics
+
+- **18+ only**: sign-up requires an 18+ declaration (stored as `age_confirmed_at` in the user's metadata), and every support request repeats it.
+- **Crisis lines**: Tele-MANAS (14416) and emergency (112), defined once in `src/lib/safetyAndIdentity.ts`.
+- **Guide types**: guides apply as a registered doctor (NMC / State Medical Council), a registered clinical psychologist (RCI CRR number), or a listener (`src/lib/guides.ts`). Moderators must confirm they found a doctor's or psychologist's registration on the official register before verifying; the check is recorded in `registration_checked_at` / `registration_checked_by`. A registration number can back only one account. Patients see the guide's type, and for registered guides their name and registration number, in the directory and the chat. Guides verified before this change start as listeners until they add registration details and are re-verified.
+- **Reports are kept**: deleting an account no longer deletes reports about it or by it. Links to the member, conversation, and message become null, while the copied message text and the reported member's name remain.
+- **Account deletion**: members delete their account from `/account`. Guides who have accepted requests are removed by a moderator instead, because conversations keep a reference to them.
+- **Grievance Officer** (`/grievance`), as the IT Rules 2021 require: set `GRIEVANCE_OFFICER_NAME` and `GRIEVANCE_OFFICER_EMAIL` in `.env.local` and Vercel, then redeploy. They are read at build time.
 
 The service is not emergency care, diagnosis, or a replacement for licensed treatment. The app includes crisis guidance, consent checks, reports, blocks, verified-doctor policies, and privacy/terms pages as a product foundation.
 
