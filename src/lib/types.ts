@@ -14,7 +14,6 @@ export type SupportRequest = {
   support_type: string;
   message: string;
   status: "open" | "claimed" | "closed";
-  is_urgent: boolean;
   created_at: string;
 };
 
@@ -25,7 +24,7 @@ export type Conversation = {
   doctor_id: string;
   status: "active" | "closed";
   created_at: string;
-  support_requests: { support_type: string; is_urgent: boolean } | null;
+  support_requests: { support_type: string } | null;
 };
 
 export type Message = {
@@ -33,7 +32,6 @@ export type Message = {
   conversation_id: string;
   sender_id: string;
   body: string;
-  is_urgent: boolean;
   created_at: string;
 };
 

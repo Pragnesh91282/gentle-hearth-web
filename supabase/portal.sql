@@ -1,13 +1,14 @@
 -- Gentle Hearth live portal upgrade.
 -- Run after schema.sql, on new and existing projects. Safe to re-run.
 
--- Crisis language is saved and flagged instead of being rejected.
-alter table public.support_requests add column if not exists is_urgent boolean not null default false;
-alter table public.messages add column if not exists is_urgent boolean not null default false;
+-- Gentle Hearth is not a crisis service: nothing is flagged urgent or
+-- prioritised. Dropping the column also drops the old urgent-first index.
+alter table public.support_requests drop column if exists is_urgent;
+alter table public.messages drop column if exists is_urgent;
 -- Moderators see only the reported text, never the whole conversation.
 alter table public.reports add column if not exists message_excerpt text;
 
-create index if not exists support_requests_queue_idx on public.support_requests (status, is_urgent desc, created_at);
+create index if not exists support_requests_queue_idx on public.support_requests (status, created_at);
 create index if not exists support_requests_patient_idx on public.support_requests (patient_id, created_at desc);
 create index if not exists conversations_patient_idx on public.conversations (patient_id);
 create index if not exists conversations_doctor_idx on public.conversations (doctor_id);

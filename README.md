@@ -42,7 +42,7 @@ Keep `SUPABASE_SERVICE_ROLE_KEY` server-only; never expose it in client-side cod
 | Who | Where | What they can do |
 | --- | --- | --- |
 | Patients | `/patients`, `/inbox` | Send requests (max 3 open), withdraw them, chat live with their guide, report or block |
-| Doctors | `/doctors/apply`, `/inbox` | Apply for verification; once verified, see the open queue (urgent first) and accept requests |
+| Doctors | `/doctors/apply`, `/inbox` | Apply for verification; once verified, see the open queue (oldest first) and accept requests |
 | Moderators | `/moderation` | Verify or reject doctor applications, triage reports |
 
 Real-time behaviour, all over Supabase Realtime:
@@ -51,7 +51,7 @@ Real-time behaviour, all over Supabase Realtime:
 - Private `conversation:<id>` channels carry typing indicators and online presence. Only the two participants can join (see the `realtime.messages` policies).
 - Unread counts, tab-title badges, and optional desktop alerts. Alerts never include message text.
 
-Crisis language is never rejected. The request or message is saved and flagged **urgent**, patients see crisis resources immediately, and doctors see urgent items pinned to the top of their queue.
+Gentle Hearth is calm, unhurried support, not a crisis service. Nothing is flagged urgent or prioritised, and guides reply in their own time. The home page, request form, terms, and privacy notice say the site is not for emergencies. If a member's own request or message mentions suicide or self-harm, it is still sent as normal, and only that member sees a gentle note pointing to Tele-MANAS and emergency services.
 
 All writes go through the `/api` routes using the service role. Row-level security only allows reads, so safety checks, request limits, and claim/close state cannot be bypassed from the browser. Claiming a request is atomic (`claim_support_request`), so two doctors cannot accept the same request.
 
@@ -70,13 +70,13 @@ All writes go through the `/api` routes using the service role. Row-level securi
 ## India launch basics
 
 - **18+ only**: sign-up requires an 18+ declaration (stored as `age_confirmed_at` in the user's metadata), and every support request repeats it.
-- **Crisis lines**: Tele-MANAS (14416) and emergency (112), defined once in `src/lib/safetyAndIdentity.ts`.
+- **Emergency pointers**: Tele-MANAS (14416) and emergency (112), defined once in `src/lib/safetyAndIdentity.ts`.
 - **Guide types**: guides apply as a registered doctor (NMC / State Medical Council), a registered clinical psychologist (RCI CRR number), or a listener (`src/lib/guides.ts`). Moderators must confirm they found a doctor's or psychologist's registration on the official register before verifying; the check is recorded in `registration_checked_at` / `registration_checked_by`. A registration number can back only one account. Patients see the guide's type, and for registered guides their name and registration number, in the directory and the chat. Guides verified before this change start as listeners until they add registration details and are re-verified.
 - **Reports are kept**: deleting an account no longer deletes reports about it or by it. Links to the member, conversation, and message become null, while the copied message text and the reported member's name remain.
 - **Account deletion**: members delete their account from `/account`. Guides who have accepted requests are removed by a moderator instead, because conversations keep a reference to them.
 - **Grievance Officer** (`/grievance`), as the IT Rules 2021 require: set `GRIEVANCE_OFFICER_NAME` and `GRIEVANCE_OFFICER_EMAIL` in `.env.local` and Vercel, then redeploy. They are read at build time.
 
-The service is not emergency care, diagnosis, or a replacement for licensed treatment. The app includes crisis guidance, consent checks, reports, blocks, verified-doctor policies, and privacy/terms pages as a product foundation.
+The service is not emergency care, diagnosis, or a replacement for licensed treatment. The app includes emergency pointers, consent checks, reports, blocks, verified-doctor policies, and privacy/terms pages as a product foundation.
 
 ## Project Structure
 
@@ -87,11 +87,11 @@ The service is not emergency care, diagnosis, or a replacement for licensed trea
 - `src/app/doctors/apply` — doctor application and profile
 - `src/app/moderation` — moderator console
 - `src/app/privacy` and `src/app/terms` — trust and consent pages
-- `src/components` — site header and crisis resources
+- `src/components` — site header and the emergency-services note
 - `src/lib/apiAuth.ts` — shared auth helpers for API routes
-- `src/lib/safetyAndIdentity.ts` — crisis detection and support options
+- `src/lib/safetyAndIdentity.ts` — emergency pointers and support options
 - `supabase/schema.sql` — accounts, requests, conversations, messages, reports, blocks, and RLS policies
-- `supabase/portal.sql` — portal upgrade: tightened RLS, atomic claim/close, urgent flags, Realtime channel policies
+- `supabase/portal.sql` — portal upgrade: tightened RLS, atomic claim/close, Realtime channel policies
 - `public` — static assets
 
 ## Learn More

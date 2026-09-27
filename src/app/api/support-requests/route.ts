@@ -34,19 +34,17 @@ export async function POST(request: Request) {
     return jsonError("You've sent several requests today. A guide will reach out soon — you can follow them in your inbox.", 429);
   }
 
-  const isUrgent = detectCrisis(message);
   const { error } = await admin.from("support_requests").insert({
     patient_id: user.id,
     support_type: supportType,
     message,
     status: "open",
     consented_to_guidance: consented,
-    is_urgent: isUrgent,
   });
 
   if (error) {
     return jsonError("We could not save your request. Please try again.", 500);
   }
 
-  return NextResponse.json({ ok: true, urgent: isUrgent, crisisMessage: isUrgent ? CRISIS_MESSAGE : undefined }, { status: 201 });
+  return NextResponse.json({ ok: true, crisisMessage: detectCrisis(message) ? CRISIS_MESSAGE : undefined }, { status: 201 });
 }

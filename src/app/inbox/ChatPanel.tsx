@@ -2,7 +2,7 @@
 
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Flag, Send } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Flag, Send } from "lucide-react";
 import CrisisResources from "@/components/CrisisResources";
 import { GUIDE_TYPES } from "@/lib/guides";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
@@ -210,9 +210,6 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
               </div>
               <div className="mt-1 flex items-center gap-2 px-1 text-[11px] text-slate-400">
                 <span>{mine ? "You" : counterpartName} · {formatTime(message.created_at)}</span>
-                {message.is_urgent && isDoctor && !mine && (
-                  <span className="inline-flex items-center gap-1 font-semibold text-rose-600"><AlertTriangle className="h-3 w-3" />Crisis language — consider sharing resources</span>
-                )}
                 {!mine && (
                   <button type="button" onClick={() => setReportTarget(message.id)} className="opacity-0 transition hover:text-rose-600 focus:opacity-100 group-hover:opacity-100" aria-label="Report this message">
                     <Flag className="h-3 w-3" />
