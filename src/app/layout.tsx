@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gentle Hearth | Mental support without pressure",
-  description: "A calm space connecting people seeking mental support with doctors and compassionate professionals who offer affordable or free guidance.",
+  title: "Thehrav | A quiet place to be heard",
+  description: "A calm, unhurried space in India to be heard by verified doctors, psychologists, and listeners, free or at low cost.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

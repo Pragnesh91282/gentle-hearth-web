@@ -8,7 +8,7 @@ export default function GrievancePage() {
   return (
     <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
       <article className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-12">
-        <Link href="/" className="text-sm font-semibold text-emerald-700">Gentle Hearth</Link>
+        <Link href="/" className="text-sm font-semibold text-emerald-700">Thehrav</Link>
         <h1 className="mt-6 text-4xl font-black tracking-tight">Grievance Officer</h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">
           If you have a complaint about content, another member&apos;s conduct, a guide, or how we handle your personal data, contact our Grievance Officer.

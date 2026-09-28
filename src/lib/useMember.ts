@@ -28,7 +28,7 @@ export function useMember(): MemberState {
       }
       const { data } = await supabase!.from("profiles").select("id, display_name, role").eq("id", user.id).maybeSingle();
       if (!cancelled) {
-        setState({ status: "signed-in", profile: (data as Profile | null) ?? { id: user.id, display_name: "Gentle Hearth member", role: "patient" } });
+        setState({ status: "signed-in", profile: (data as Profile | null) ?? { id: user.id, display_name: "Thehrav member", role: "patient" } });
       }
     }
 
