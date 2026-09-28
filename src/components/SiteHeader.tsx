@@ -31,7 +31,7 @@ export default function SiteHeader() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-lg shadow-sm">🌿</span>
-          <span className="text-lg font-semibold tracking-tight text-emerald-900">Gentle Hearth</span>
+          <span className="text-lg font-semibold tracking-tight text-emerald-900">Thehrav</span>
         </Link>
 
         <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto text-sm font-medium text-slate-600 sm:order-none sm:w-auto">

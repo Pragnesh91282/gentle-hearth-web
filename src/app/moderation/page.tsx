@@ -69,7 +69,7 @@ export default function ModerationPage() {
     return <main className="flex flex-1 items-center justify-center p-10 text-slate-600">Loading…</main>;
   }
   if (!isModerator) {
-    return <main className="flex flex-1 items-center justify-center p-10 text-sm text-slate-600">This area is only available to Gentle Hearth moderators.</main>;
+    return <main className="flex flex-1 items-center justify-center p-10 text-sm text-slate-600">This area is only available to Thehrav moderators.</main>;
   }
 
   return (

@@ -13,7 +13,7 @@ const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, created_at";
 // Alerts carry no message content, so nothing private shows on a lock screen.
 function notify(title: string) {
   if (typeof Notification === "undefined" || Notification.permission !== "granted" || !document.hidden) return;
-  new Notification(title, { body: "Open Gentle Hearth to read it.", tag: "gentle-hearth" });
+  new Notification(title, { body: "Open Thehrav to read it.", tag: "thehrav" });
 }
 
 async function postJson(url: string, method: "POST" | "PATCH", body?: unknown) {
@@ -143,7 +143,7 @@ export function usePortal(me: Profile | null) {
 
   const totalUnread = Object.values(unread).reduce((sum, count) => sum + count, 0);
   useEffect(() => {
-    document.title = totalUnread ? `(${totalUnread}) Inbox · Gentle Hearth` : "Inbox · Gentle Hearth";
+    document.title = totalUnread ? `(${totalUnread}) Inbox · Thehrav` : "Inbox · Thehrav";
   }, [totalUnread]);
 
   const selectConversation = useCallback(async (conversationId: string | null) => {

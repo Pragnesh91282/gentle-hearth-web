@@ -1,7 +1,7 @@
--- Gentle Hearth live portal upgrade.
+-- Thehrav (formerly Gentle Hearth) live portal upgrade.
 -- Run after schema.sql, on new and existing projects. Safe to re-run.
 
--- Gentle Hearth is not a crisis service: nothing is flagged urgent or
+-- Thehrav is not a crisis service: nothing is flagged urgent or
 -- prioritised. Dropping the column also drops the old urgent-first index.
 alter table public.support_requests drop column if exists is_urgent;
 alter table public.messages drop column if exists is_urgent;
@@ -181,3 +181,16 @@ alter table public.reports drop constraint if exists reports_reported_user_id_fk
 alter table public.reports add constraint reports_reported_user_id_fkey
   foreign key (reported_user_id) references public.profiles(id) on delete set null;
 alter table public.reports add column if not exists reported_name text;
+
+-- Renamed from Gentle Hearth to Thehrav: new members' default display name.
+alter table public.profiles alter column display_name set default 'Thehrav member';
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.profiles (id, display_name)
+  values (new.id, coalesce(new.raw_user_meta_data ->> 'display_name', 'Thehrav member'))
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+update public.profiles set display_name = 'Thehrav member' where display_name = 'Gentle Hearth member';

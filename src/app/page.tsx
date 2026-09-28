@@ -80,7 +80,7 @@ export default function Page() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Gentle Hearth connects people who need mental health support with doctors and compassionate helpers
+            Thehrav connects people who need mental health support with doctors and compassionate helpers
             who offer guidance at low cost or even free. No pressure. No shame. Just a respectful place to ask,
             listen, and heal.
           </p>
@@ -223,7 +223,7 @@ export default function Page() {
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">For doctors and guides</p>
             <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">You can help without pressure or overload.</h3>
             <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
-              Gentle Hearth makes it easier for qualified professionals to share calm guidance, answer questions, and offer support
+              Thehrav makes it easier for qualified professionals to share calm guidance, answer questions, and offer support
               in a low-pressure, compassionate environment.
             </p>
 
@@ -273,7 +273,7 @@ export default function Page() {
           </div>
           <h3 className="mt-5 text-3xl font-bold tracking-tight">A calmer place to begin.</h3>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-emerald-50">
-            Whether you need support or want to help others, Gentle Hearth is built for gentle conversations, respectful care,
+            Whether you need support or want to help others, Thehrav is built for gentle conversations, respectful care,
             and real human connection.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -290,7 +290,7 @@ export default function Page() {
       <footer className="border-t border-slate-200 bg-white/80">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-sm text-slate-600">
           <div>
-            <p>Gentle Hearth</p>
+            <p>Thehrav</p>
             <p className="mt-1 text-xs text-slate-500">
               Not an emergency service. In crisis? {CRISIS_LINES}
             </p>

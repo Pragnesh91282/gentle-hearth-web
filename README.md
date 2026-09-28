@@ -1,6 +1,8 @@
 # gentle-hearth-web
 
-Gentle Hearth is a calm support platform connecting people seeking mental-health guidance with doctors and compassionate professionals.
+Thehrav (ठहराव, "a pause, stillness"; formerly Gentle Hearth) is a calm support platform connecting people seeking mental-health guidance with doctors and compassionate professionals.
+
+Live at https://www.thehrav-thementalhealthsupport.com (also https://gentle-hearth-web.vercel.app).
 
 This project is built with Next.js, Supabase, and a small safety utility module. The patient form submits requests through `/api/support-requests`.
 
@@ -51,7 +53,7 @@ Real-time behaviour, all over Supabase Realtime:
 - Private `conversation:<id>` channels carry typing indicators and online presence. Only the two participants can join (see the `realtime.messages` policies).
 - Unread counts, tab-title badges, and optional desktop alerts. Alerts never include message text.
 
-Gentle Hearth is calm, unhurried support, not a crisis service. Nothing is flagged urgent or prioritised, and guides reply in their own time. The home page, request form, terms, and privacy notice say the site is not for emergencies. If a member's own request or message mentions suicide or self-harm, it is still sent as normal, and only that member sees a gentle note pointing to Tele-MANAS and emergency services.
+Thehrav is calm, unhurried support, not a crisis service. Nothing is flagged urgent or prioritised, and guides reply in their own time. The home page, request form, terms, and privacy notice say the site is not for emergencies. If a member's own request or message mentions suicide or self-harm, it is still sent as normal, and only that member sees a gentle note pointing to Tele-MANAS and emergency services.
 
 All writes go through the `/api` routes using the service role. Row-level security only allows reads, so safety checks, request limits, and claim/close state cannot be bypassed from the browser. Claiming a request is atomic (`claim_support_request`), so two doctors cannot accept the same request.
 
@@ -59,7 +61,7 @@ All writes go through the `/api` routes using the service role. Row-level securi
 
 - **Rate limits** (`src/lib/rateLimit.ts`), counted in the database so they hold across Vercel instances: 15 messages/minute and 200/hour per member; 6 support requests/day on top of the 3-open cap; 10 reports/day.
 - **CAPTCHA on sign-in and sign-up** with Cloudflare Turnstile through Supabase's built-in bot protection:
-  1. Create a free Turnstile widget at dash.cloudflare.com → Turnstile, adding your domains (for example `gentle-hearth-web.vercel.app` and `localhost`).
+  1. Create a free Turnstile widget at dash.cloudflare.com → Turnstile, adding your domains (`thehrav-thementalhealthsupport.com`, `www.thehrav-thementalhealthsupport.com`, `gentle-hearth-web.vercel.app`, and `localhost`).
   2. Put the **secret key** in Supabase → Authentication → Attack Protection → Enable Captcha protection → Cloudflare Turnstile.
   3. Put the **site key** in `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (in `.env.local` and Vercel), then redeploy.
 

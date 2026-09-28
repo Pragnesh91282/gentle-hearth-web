@@ -67,7 +67,7 @@ export default function DoctorsPage() {
             <div>
               <h1 className="text-4xl font-black tracking-tight text-slate-900">Offer support in a way that feels gentle and sustainable.</h1>
               <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
-                Gentle Hearth is designed for professionals who want to provide thoughtful guidance without pressure, rush, or overwhelming demand. Here, care can be human, respectful, and accessible.
+                Thehrav is designed for professionals who want to provide thoughtful guidance without pressure, rush, or overwhelming demand. Here, care can be human, respectful, and accessible.
               </p>
 
               <div className="mt-6 grid gap-3">

@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
       <article className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-12">
-        <Link href="/" className="text-sm font-semibold text-emerald-700">Gentle Hearth</Link>
+        <Link href="/" className="text-sm font-semibold text-emerald-700">Thehrav</Link>
         <h1 className="mt-6 text-4xl font-black tracking-tight">Privacy notice</h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">What you share here is about your mental health, and we treat it that way. We collect only what we need to run the service.</p>
         <div className="mt-8 space-y-6 text-sm leading-7 text-slate-700">

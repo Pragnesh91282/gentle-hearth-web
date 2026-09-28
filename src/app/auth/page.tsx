@@ -43,7 +43,7 @@ export default function AuthPage() {
       return;
     }
     if (mode === "sign-up" && !isAdult) {
-      setError("Gentle Hearth is for people aged 18 or older. If you need help now, call Tele-MANAS on 14416.");
+      setError("Thehrav is for people aged 18 or older. If you need help now, call Tele-MANAS on 14416.");
       return;
     }
     setIsSubmitting(true);
