@@ -10,7 +10,7 @@ import type { DoctorProfile } from "@/lib/types";
 
 const STATUS_COPY = {
   pending: { icon: Clock3, text: "Your application is waiting for moderator review. You'll be able to accept requests as soon as it's verified.", tone: "border-amber-200 bg-amber-50 text-amber-900" },
-  verified: { icon: BadgeCheck, text: "You're verified. Open requests appear live in your inbox.", tone: "border-emerald-200 bg-emerald-50 text-emerald-900" },
+  verified: { icon: BadgeCheck, text: "You're verified. Open requests appear live in your inbox.", tone: "border-sand-200 bg-sand-100 text-leaf-900" },
   rejected: { icon: XCircle, text: "Your last application wasn't approved. Update your credentials and resubmit for another review.", tone: "border-rose-200 bg-rose-50 text-rose-900" },
 };
 
@@ -103,14 +103,14 @@ export default function DoctorApplyPage() {
   const registration = GUIDE_TYPES[guideType].registration;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf8,_#edf8f5_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
+    <main className="min-h-screen bg-sand-50 px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-2xl">
-        <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <section className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-xl shadow-leaf-900/5">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-sand-100 text-leaf-700">
             <Stethoscope className="h-5 w-5" />
           </div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">For doctors and guides</p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight">{application ? "Your guide profile" : "Apply to offer guidance"}</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-700">For doctors and guides</p>
+          <h1 className="mt-3 font-display text-3xl font-semibold text-leaf-900 tracking-tight">{application ? "Your guide profile" : "Apply to offer guidance"}</h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">A moderator reviews every application before you can accept requests. Registered doctors and psychologists are checked against the official register, and patients see your name and registration number, as India&apos;s Telemedicine Practice Guidelines require. Patients never see your email.</p>
 
           {status && (
@@ -125,8 +125,8 @@ export default function DoctorApplyPage() {
               <legend className="mb-2 block text-sm font-semibold text-slate-700">I am a</legend>
               <div className="grid gap-2">
                 {(Object.keys(GUIDE_TYPES) as GuideType[]).map((type) => (
-                  <label key={type} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3 text-sm transition ${guideType === type ? "border-emerald-600 bg-emerald-50" : "border-slate-200 hover:border-slate-300"}`}>
-                    <input type="radio" name="guide-type" value={type} checked={guideType === type} onChange={() => setGuideType(type)} className="mt-1 accent-emerald-700" />
+                  <label key={type} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3 text-sm transition ${guideType === type ? "border-leaf-700 bg-sand-100" : "border-slate-200 hover:border-slate-300"}`}>
+                    <input type="radio" name="guide-type" value={type} checked={guideType === type} onChange={() => setGuideType(type)} className="mt-1 accent-leaf-700" />
                     <span>
                       <span className="block font-semibold text-slate-800">{GUIDE_TYPES[type].label}</span>
                       <span className="block text-xs leading-5 text-slate-600">{GUIDE_TYPES[type].scope}</span>
@@ -177,7 +177,7 @@ export default function DoctorApplyPage() {
                 <input id="support-mode" maxLength={120} value={supportMode} onChange={(event) => setSupportMode(event.target.value)} className="field" />
               </div>
             </div>
-            <button type="submit" disabled={isSaving || member.status !== "signed-in"} className="w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
+            <button type="submit" disabled={isSaving || member.status !== "signed-in"} className="w-full rounded-full bg-leaf-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-leaf-800 disabled:cursor-not-allowed disabled:opacity-60">
               {isSaving ? "Saving..." : application ? "Save profile" : "Submit for review"}
             </button>
           </form>

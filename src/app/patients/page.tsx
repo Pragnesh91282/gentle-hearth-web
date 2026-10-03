@@ -116,22 +116,22 @@ export default function PatientsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_28%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
+    <main className="min-h-screen bg-sand-50 px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-5xl">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
+          <section className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-xl shadow-leaf-900/5">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-sand-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-leaf-800">
               <HeartHandshake className="h-3.5 w-3.5" />
               For people seeking support
             </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-slate-900">Tell us what feels heavy right now.</h1>
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-leaf-900">Tell us what feels heavy right now.</h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
               You are not asking for too much. Share a little about what you are carrying, and we will match you with a supportive doctor or guide who can respond gently and without pressure.
             </p>
 
             {restoredDraft && (
-              <p role="status" className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+              <p role="status" className="mt-6 rounded-2xl border border-sand-200 bg-sand-100 p-4 text-sm text-leaf-900">
                 We kept what you wrote. Nothing has been sent yet. Read it over, then send it when you&apos;re ready.
               </p>
             )}
@@ -147,7 +147,7 @@ export default function PatientsPage() {
                       onClick={() => setSelectedSupport(option)}
                       className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
                         selectedSupport === option
-                          ? "border-emerald-600 bg-emerald-50 text-emerald-800"
+                          ? "border-leaf-700 bg-sand-100 text-leaf-800"
                           : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
                       }`}
                     >
@@ -166,7 +166,7 @@ export default function PatientsPage() {
                   required
                   maxLength={2000}
                   placeholder="I feel overwhelmed and need help building a calmer routine."
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none ring-0 transition focus:border-emerald-300 focus:bg-white"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none ring-0 transition focus:border-sand-200 focus:bg-white"
                 />
               </div>
 
@@ -178,7 +178,7 @@ export default function PatientsPage() {
                       type="button"
                       key={concern}
                       onClick={() => setMessage(concern)}
-                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-emerald-200 hover:text-emerald-700"
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-sand-200 hover:text-leaf-700"
                     >
                       {concern}
                     </button>
@@ -187,14 +187,14 @@ export default function PatientsPage() {
               </div>
 
               <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
-                <input type="checkbox" checked={consented} onChange={(event) => setConsented(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
+                <input type="checkbox" checked={consented} onChange={(event) => setConsented(event.target.checked)} className="mt-1 h-4 w-4 accent-leaf-700" required />
                 <span>I am 18 or older, and I understand this is a peer-support pathway, not emergency care, diagnosis, or a replacement for a licensed treatment plan.</span>
               </label>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full bg-leaf-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-leaf-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? "Sending request..." : member.status === "signed-out" ? "Continue: create a free account" : "Send to a supportive guide"}
               </button>
@@ -213,31 +213,31 @@ export default function PatientsPage() {
             {crisisMessage && <div className="mt-6"><CrisisResources message={crisisMessage} /></div>}
 
             {submitted && (
-              <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+              <div className="mt-6 rounded-2xl border border-sand-200 bg-sand-100 p-4 text-sm text-leaf-900">
                 Your request was sent. Verified guides see it right away, and you&apos;ll get a live notification in your inbox when one of them replies.
-                <Link href="/inbox" className="mt-3 inline-flex font-semibold text-emerald-800 underline">Open your live inbox</Link>
+                <Link href="/inbox" className="mt-3 inline-flex font-semibold text-leaf-800 underline">Open your live inbox</Link>
               </div>
             )}
           </section>
 
           <aside className="space-y-5">
-            <div className="rounded-[2rem] border border-slate-200 bg-slate-900 p-6 text-white shadow-xl">
+            <div className="rounded-[2rem] border border-slate-200 bg-leaf-900 p-6 text-white shadow-xl">
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-200">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-marigold-400/15 text-marigold-400">
                   <MessageSquareHeart className="h-5 w-5" />
                 </div>
                 <p className="text-lg font-semibold">What you can expect</p>
               </div>
 
               <ul className="space-y-3 text-sm text-slate-200">
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Respectful listening with no pressure</li>
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Free to use, with no pressure to continue</li>
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> A calm, nonjudgmental environment</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Respectful listening with no pressure</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Free to use, with no pressure to continue</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> A calm, nonjudgmental environment</li>
               </ul>
             </div>
 
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Need immediate help?</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-leaf-700">Need immediate help?</p>
               <p className="mt-4 text-base leading-7 text-slate-700">
                 If you are in crisis or feel unsafe, call Tele-MANAS on 14416 for free, confidential support right away, 24/7. In an emergency, call 112.
               </p>

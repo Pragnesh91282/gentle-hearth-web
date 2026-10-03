@@ -10,6 +10,32 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-devanagari: var(--font-tiro), serif;
+  /* Warm palette: sand paper, deep leaf green, marigold. */
+  --color-sand-50: #fdfaf4;
+  --color-sand-100: #f7f0e3;
+  --color-sand-200: #ede1cb;
+  --color-leaf-700: #1f5c46;
+  --color-leaf-800: #184a38;
+  --color-leaf-900: #12372a;
+  --color-marigold-400: #f2a93b;
+  --color-marigold-500: #e08c1a;
+  --color-marigold-600: #b45f0a;
+}
+
+/* A slow breath for the hero: in for 5s, out for 5s. */
+@keyframes breathe {
+  0%, 100% { transform: scale(0.92); opacity: 0.55; }
+  50% { transform: scale(1.06); opacity: 0.9; }
+}
+
+.breathe {
+  animation: breathe 10s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe { animation: none; }
 }
 
 html {
