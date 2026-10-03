@@ -25,7 +25,7 @@ export default function DoctorApplyPage() {
   const [specialties, setSpecialties] = useState("");
   const [bio, setBio] = useState("");
   const [availability, setAvailability] = useState("By arrangement");
-  const [supportMode, setSupportMode] = useState("Free or low-cost");
+  const [supportMode, setSupportMode] = useState("Free");
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 

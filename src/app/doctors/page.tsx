@@ -23,7 +23,7 @@ function guideSubtitle(doctor: DoctorProfile) {
 const offerings = [
   "Offer general emotional guidance and listening support",
   "Respond to questions without creating pressure or guilt",
-  "Support people with low-cost or free care pathways",
+  "Offer free support to people who might never reach a clinic",
   "Create a calmer entry point for professional mental support",
 ];
 

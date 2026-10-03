@@ -20,9 +20,9 @@ const supportAreas = [
   },
   {
     icon: Stethoscope,
-    title: "Affordable care",
+    title: "Free, and anonymous if you like",
     description:
-      "Doctors and mental health professionals can offer low-cost or free support, check-ins, and gentle guidance.",
+      "Asking and talking cost nothing. Use any name you like: guides never see your email.",
   },
   {
     icon: HeartHandshake,
@@ -72,7 +72,7 @@ export default function Page() {
         <div className="flex flex-col justify-center">
           <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
             <Sparkles className="h-3.5 w-3.5" />
-            Calm, affordable support
+            Free, anonymous, unhurried
           </div>
 
           <h1 className="max-w-xl text-4xl font-black tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
@@ -81,7 +81,7 @@ export default function Page() {
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
             Thehrav connects people who need mental health support with doctors and compassionate helpers
-            who offer guidance at low cost or even free. No pressure. No shame. Just a respectful place to ask,
+            who offer guidance for free. No pressure. No shame. Just a respectful place to ask,
             listen, and heal.
           </p>
 
@@ -108,7 +108,7 @@ export default function Page() {
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
               <p className="text-2xl font-bold text-emerald-700">Free</p>
-              <p className="mt-1 text-xs text-slate-600">or low-cost care</p>
+              <p className="mt-1 text-xs text-slate-600">to ask and to talk</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
               <p className="text-2xl font-bold text-emerald-700">0</p>

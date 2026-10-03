@@ -1,10 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HeartHandshake, MessageSquareHeart, ShieldCheck } from "lucide-react";
 import CrisisResources from "@/components/CrisisResources";
 import { SUPPORT_OPTIONS } from "@/lib/safetyAndIdentity";
+import { useMember } from "@/lib/useMember";
+
+// Holds an unsent request while the writer signs up, so they never have to
+// write it twice. Kept for a day at most and cleared once it's sent.
+const DRAFT_KEY = "thehrav:request-draft";
+const DRAFT_MAX_AGE = 24 * 60 * 60 * 1000;
+
+type Draft = { supportType: string; message: string; savedAt: number };
+
+function saveDraft(supportType: string, message: string) {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ supportType, message, savedAt: Date.now() } satisfies Draft));
+  } catch {
+    // Storage can be unavailable (private mode); the writer just keeps the page open.
+  }
+}
+
+function takeDraft(): Draft | null {
+  try {
+    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? "null") as Draft | null;
+    if (!draft || Date.now() - draft.savedAt > DRAFT_MAX_AGE) {
+      localStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return draft;
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft() {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Nothing to clear.
+  }
+}
 
 const exampleConcerns = [
   "I feel overwhelmed and exhausted after work.",
@@ -13,6 +51,8 @@ const exampleConcerns = [
 ];
 
 export default function PatientsPage() {
+  const router = useRouter();
+  const member = useMember();
   const [selectedSupport, setSelectedSupport] = useState("I need someone to listen");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -21,6 +61,16 @@ export default function PatientsPage() {
   const [consented, setConsented] = useState(false);
   const [needsSignIn, setNeedsSignIn] = useState(false);
   const [crisisMessage, setCrisisMessage] = useState("");
+  const [restoredDraft, setRestoredDraft] = useState(false);
+
+  useEffect(() => {
+    const draft = takeDraft();
+    if (!draft) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser storage is only readable after mount
+    setMessage(draft.message);
+    if (SUPPORT_OPTIONS.includes(draft.supportType)) setSelectedSupport(draft.supportType);
+    setRestoredDraft(true);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,6 +78,14 @@ export default function PatientsPage() {
     setError("");
     setNeedsSignIn(false);
     setCrisisMessage("");
+
+    // Signed-out writers create a free account first; their words wait for them.
+    if (member.status === "signed-out") {
+      saveDraft(selectedSupport, message);
+      router.push("/auth?mode=sign-up&next=/patients");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -39,12 +97,15 @@ export default function PatientsPage() {
       const result = await response.json();
 
       if (!response.ok) {
+        if (response.status === 401) saveDraft(selectedSupport, message);
         setNeedsSignIn(response.status === 401);
         setError(response.status === 401 ? "Please sign in so a guide can reply to you privately. Your message is still here." : result.error ?? "We could not send your request. Please try again.");
         return;
       }
 
       setMessage("");
+      clearDraft();
+      setRestoredDraft(false);
       setSubmitted(true);
       setCrisisMessage(result.crisisMessage ?? "");
     } catch {
@@ -68,6 +129,12 @@ export default function PatientsPage() {
             <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
               You are not asking for too much. Share a little about what you are carrying, and we will match you with a supportive doctor or guide who can respond gently and without pressure.
             </p>
+
+            {restoredDraft && (
+              <p role="status" className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                We kept what you wrote. Nothing has been sent yet. Read it over, then send it when you&apos;re ready.
+              </p>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div>
@@ -129,8 +196,11 @@ export default function PatientsPage() {
                 disabled={isSubmitting}
                 className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Sending request..." : "Send to a supportive guide"}
+                {isSubmitting ? "Sending request..." : member.status === "signed-out" ? "Continue: create a free account" : "Send to a supportive guide"}
               </button>
+              {member.status === "signed-out" && (
+                <p className="text-xs leading-5 text-slate-500">A free account lets a guide reply to you privately. We keep what you&apos;ve written while you sign up, and guides never see your email.</p>
+              )}
             </form>
 
             {error && (
@@ -161,7 +231,7 @@ export default function PatientsPage() {
 
               <ul className="space-y-3 text-sm text-slate-200">
                 <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Respectful listening with no pressure</li>
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Affordable or free guidance options</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> Free to use, with no pressure to continue</li>
                 <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" /> A calm, nonjudgmental environment</li>
               </ul>
             </div>
