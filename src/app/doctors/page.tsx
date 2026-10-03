@@ -55,17 +55,17 @@ export default function DoctorsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf8,_#edf8f5_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
+    <main className="min-h-screen bg-sand-50 px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-6xl">
-        <div className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
+        <div className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-xl shadow-leaf-900/5">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-sand-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-leaf-800">
             <HeartHandshake className="h-3.5 w-3.5" />
             For doctors and guides
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
             <div>
-              <h1 className="text-4xl font-black tracking-tight text-slate-900">Offer support in a way that feels gentle and sustainable.</h1>
+              <h1 className="font-display text-4xl font-semibold tracking-tight text-leaf-900">Offer support in a way that feels gentle and sustainable.</h1>
               <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
                 Thehrav is designed for professionals who want to provide thoughtful guidance without pressure, rush, or overwhelming demand. Here, care can be human, respectful, and accessible.
               </p>
@@ -73,22 +73,22 @@ export default function DoctorsPage() {
               <div className="mt-6 grid gap-3">
                 {offerings.map((item) => (
                   <div key={item} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-leaf-700" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
 
-              <Link href="/doctors/apply" className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-800">
+              <Link href="/doctors/apply" className="mt-6 inline-flex items-center gap-2 rounded-full bg-leaf-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-leaf-800">
                 Apply to offer guidance
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="rounded-[2rem] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6">
+            <div className="rounded-[2rem] border border-sand-200 bg-gradient-to-br from-sand-100 to-white p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-slate-900">Available support</h2>
-                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                <div className="inline-flex items-center gap-2 rounded-full bg-sand-200 px-3 py-1 text-xs font-semibold text-leaf-800">
                   <CalendarCheck2 className="h-3.5 w-3.5" />
                   Flexible hours
                 </div>
@@ -104,7 +104,7 @@ export default function DoctorsPage() {
                     onClick={() => setSelected(doctor.user_id)}
                     className={`w-full rounded-2xl border p-4 text-left transition ${
                       selected === doctor.user_id
-                        ? "border-emerald-500 bg-white shadow-sm"
+                        ? "border-leaf-700 bg-white shadow-sm"
                         : "border-slate-200 bg-white/60 hover:border-slate-300"
                     }`}
                   >
@@ -112,9 +112,9 @@ export default function DoctorsPage() {
                       <div>
                         <p className="font-semibold text-slate-900">{guideTitle(doctor)}</p>
                         <p className="mt-1 text-xs text-slate-500">{guideSubtitle(doctor)}</p>
-                        <p className="mt-1 text-xs font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
+                        <p className="mt-1 text-xs font-medium text-leaf-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
                       </div>
-                      <ShieldCheck className="h-4 w-4 text-emerald-600" aria-label="Verified profile" />
+                      <ShieldCheck className="h-4 w-4 text-leaf-700" aria-label="Verified profile" />
                     </div>
 
                     <p className="mt-3 text-xs text-slate-600">{doctor.availability} · {doctor.support_mode}</p>
@@ -130,12 +130,12 @@ export default function DoctorsPage() {
             <div key={doctor.user_id} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xl font-bold text-slate-900">{guideTitle(doctor)}</p>
-                <ShieldCheck className="h-5 w-5 text-emerald-600" aria-label="Verified profile" />
+                <ShieldCheck className="h-5 w-5 text-leaf-700" aria-label="Verified profile" />
               </div>
               <p className="mb-2 text-xs text-slate-500">{guideSubtitle(doctor)}</p>
               <p className="mb-3 text-xs leading-5 text-slate-600">{GUIDE_TYPES[doctor.guide_type].scope}</p>
 
-              <p className="text-sm font-medium text-emerald-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
+              <p className="text-sm font-medium text-leaf-700">{doctor.specialties.join(", ") || doctor.credentials}</p>
               <p className="mt-4 text-sm leading-7 text-slate-600">{doctor.bio}</p>
               <div className="mt-5 rounded-2xl bg-slate-50 p-3 text-xs font-medium text-slate-700">{doctor.availability} · {doctor.support_mode}</div>
             </div>

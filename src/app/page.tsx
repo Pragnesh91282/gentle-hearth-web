@@ -1,307 +1,253 @@
 import {
   ArrowRight,
-  HeartHandshake,
-  MessageSquareHeart,
+  BadgeCheck,
+  Clock,
+  Ear,
+  HandHeart,
+  Hourglass,
+  IndianRupee,
+  Lock,
+  Mail,
+  MessagesSquare,
+  PenLine,
   ShieldCheck,
-  Sparkles,
-  Stethoscope,
-  TimerReset,
-  Users,
+  UserRoundCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { GUIDE_TYPES, type GuideType } from "@/lib/guides";
 import { CRISIS_LINES } from "@/lib/safetyAndIdentity";
 
-const supportAreas = [
-  {
-    icon: MessageSquareHeart,
-    title: "Ask without pressure",
-    description:
-      "People can share their worries in a calm, private space and receive thoughtful guidance at their own pace.",
-  },
-  {
-    icon: Stethoscope,
-    title: "Free, and anonymous if you like",
-    description:
-      "Asking and talking cost nothing. Use any name you like: guides never see your email.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Support that feels human",
-    description:
-      "No demanding scripts, no guilt, no pressure—just respectful, compassionate conversations and next steps.",
-  },
+// Situations people recognise themselves in, in their own words.
+const carrying = [
+  "Exam or career pressure",
+  "Expectations at home",
+  "Lonely in a new city",
+  "Overthinking at night",
+  "Burnt out from work",
+  "A relationship that hurts",
+  "Grief or loss",
+  "Just heavy, not sure why",
 ];
 
-const howItWorks = [
-  "Share what feels heavy or confusing.",
-  "Choose a guidance path that feels safe and comfortable.",
-  "Receive grounded advice from supportive professionals.",
+const steps = [
+  { icon: PenLine, title: "Write it down", text: "Share what feels heavy, in your own words. No forms, no labels, no real name needed." },
+  { icon: UserRoundCheck, title: "A guide picks it up", text: "A verified listener, psychologist or doctor reads it and starts a private conversation with you." },
+  { icon: MessagesSquare, title: "Talk at your own pace", text: "Reply whenever you're ready. We email you when there's a new message, never with what was said." },
 ];
 
-const communityQuestions = [
-  {
-    title: "Burnout and exhaustion",
-    summary: "I feel drained all the time and don't know how to rest without guilt.",
-  },
-  {
-    title: "Anxiety and overthinking",
-    summary: "My thoughts spiral at night, and I need help finding calmer routines.",
-  },
-  {
-    title: "Relationship stress",
-    summary: "I want support in understanding conflict without feeling judged or rushed.",
-  },
+const promises = [
+  { icon: IndianRupee, title: "Free", text: "No fees, no subscriptions, no catch. Every guide gives their time freely." },
+  { icon: Lock, title: "Anonymous", text: "Use any name you like. Guides never see your email." },
+  { icon: BadgeCheck, title: "Verified", text: "Doctors are checked on the NMC register and psychologists on RCI's. Every listener is reviewed." },
+  { icon: Hourglass, title: "Unhurried", text: "No timers and no pressure to reply. Take a pause whenever you need one." },
 ];
 
-const verificationSteps = [
-  { title: "Apply as a doctor, psychologist, or listener", description: "Doctors share their NMC or State Medical Council registration, clinical psychologists their RCI registration, and listeners their training." },
-  { title: "Checked against the register", description: "A moderator looks up every doctor and psychologist on the official register before approving them." },
-  { title: "Clear roles", description: "You always see what kind of guide you're talking to. Listeners offer emotional support only, never medical advice." },
+const helperReasons = [
+  { icon: Clock, title: "Your time, your pace", text: "Choose which requests to take, and reply when it suits you. Even an hour a week helps." },
+  { icon: HandHeart, title: "Reach people clinics don't", text: "Many members can't afford therapy, or aren't ready to walk into a clinic. You may be their first step." },
+  { icon: ShieldCheck, title: "Clear roles and limits", text: "Listeners support, professionals guide, and nobody prescribes over chat. Moderators have your back." },
+  { icon: BadgeCheck, title: "Recognised for it", text: "Registered professionals get a verified profile. Students can ask for a letter of their volunteer hours." },
 ];
 
-const doctorSupport = [
-  "Offer general guidance and emotional support.",
-  "Answer questions in a respectful, nonjudgmental way.",
-  "Create a more accessible entry point for people who need care.",
-];
+const roleIcons: Record<GuideType, typeof Ear> = { doctor: ShieldCheck, psychologist: BadgeCheck, listener: Ear };
+const roleWho: Record<GuideType, string> = {
+  doctor: "MBBS and above, registered with the NMC or a State Medical Council",
+  psychologist: "Clinical psychologists with an RCI registration (CRR number)",
+  listener: "Counsellors, psychology students and trained peer-support volunteers",
+};
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f7fbf8,_#eef6f2_35%,_#f8fafc_100%)] text-slate-900">
-      <section className="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-[1.15fr_0.85fr] md:py-24">
-        <div className="flex flex-col justify-center">
-          <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
-            <Sparkles className="h-3.5 w-3.5" />
-            Free, anonymous, unhurried
-          </div>
+    <main className="bg-sand-50 text-slate-900">
+      {/* Hero: for people who need to talk */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-marigold-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute -left-32 top-64 h-80 w-80 rounded-full bg-leaf-700/10 blur-3xl" />
 
-          <h1 className="max-w-xl text-4xl font-black tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Support that feels safe, kind, and accessible.
-          </h1>
-
-          <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Thehrav connects people who need mental health support with doctors and compassionate helpers
-            who offer guidance for free. No pressure. No shame. Just a respectful place to ask,
-            listen, and heal.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/patients"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white shadow-md transition hover:bg-emerald-800"
-            >
-              Ask for support
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/doctors/apply"
-              className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-            >
-              I want to help
-            </Link>
-          </div>
-
-          <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 text-left">
-            <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-700">Every</p>
-              <p className="mt-1 text-xs text-slate-600">guide reviewed by a moderator</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-700">Free</p>
-              <p className="mt-1 text-xs text-slate-600">to ask and to talk</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm">
-              <p className="text-2xl font-bold text-emerald-700">0</p>
-              <p className="mt-1 text-xs text-slate-600">Pressure, guilt, rush</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="absolute -left-10 top-8 h-40 w-40 rounded-full bg-emerald-200/60 blur-3xl" />
-          <div className="absolute -right-6 bottom-6 h-44 w-44 rounded-full bg-teal-200/60 blur-3xl" />
-
-          <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_25px_80px_rgba(16,185,129,0.12)]">
-            <div className="rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Example conversation</p>
-                  <h2 className="mt-3 text-2xl font-bold text-slate-900">What feels heavy today?</h2>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm">
-                  <HeartHandshake className="h-6 w-6" />
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-4">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Users className="h-4 w-4 text-emerald-600" />
-                    Support request
-                  </div>
-                  <p className="text-sm leading-6 text-slate-600">
-                    “I feel exhausted and overwhelmed. I need guidance that helps me breathe and reset without feeling judged.”
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Stethoscope className="h-4 w-4 text-emerald-600" />
-                    Doctor response
-                  </div>
-                  <p className="text-sm leading-6 text-slate-600">
-                    “You don&apos;t have to carry this alone. Let&apos;s focus on small, manageable steps and a practical reset plan.”
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="about" className="mx-auto max-w-6xl px-5 py-4">
-        <div className="mb-10 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Why this exists</p>
-          <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">Mental support should feel welcoming, not intimidating.</h3>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {supportAreas.map(({ icon: Icon, title, description }) => (
-            <div key={title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h4 className="text-xl font-semibold text-slate-900">{title}</h4>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="how-it-works" className="mx-auto max-w-6xl px-5 py-16">
-        <div className="rounded-[2rem] border border-slate-200 bg-slate-900 p-8 text-white shadow-xl md:p-10">
-          <div className="mb-8 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">How it works</p>
-            <h3 className="mt-3 text-3xl font-bold tracking-tight">Simple steps to feel supported.</h3>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {howItWorks.map((step, index) => (
-              <div key={step} className="rounded-2xl border border-slate-700 bg-white/5 p-5">
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-200">
-                  0{index + 1}
-                </div>
-                <p className="text-base leading-7 text-slate-200">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="support" className="mx-auto max-w-6xl px-5 py-4">
-        <div className="mb-10 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Support spaces</p>
-          <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">The kinds of things people bring here</h3>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {communityQuestions.map((item) => (
-            <article key={item.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
-                <MessageSquareHeart className="h-5 w-5" />
-              </div>
-              <h4 className="text-xl font-semibold text-slate-900">{item.title}</h4>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.summary}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="doctors" className="mx-auto max-w-6xl px-5 py-16">
-        <div className="grid gap-8 rounded-[2rem] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm md:grid-cols-[1fr_0.9fr] md:p-10">
+        <div className="relative mx-auto grid max-w-6xl gap-14 px-5 pb-20 pt-14 md:grid-cols-[1.15fr_0.85fr] md:items-center md:pb-28 md:pt-20">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">For doctors and guides</p>
-            <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">You can help without pressure or overload.</h3>
-            <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
-              Thehrav makes it easier for qualified professionals to share calm guidance, answer questions, and offer support
-              in a low-pressure, compassionate environment.
+            <p className="inline-flex items-center gap-3 rounded-full border border-sand-200 bg-white/70 px-4 py-1.5 text-sm text-leaf-800">
+              <span lang="hi" className="font-devanagari text-lg leading-none">ठहराव</span>
+              <span className="text-slate-400">·</span>
+              <span>thehrav, “a pause”</span>
+            </p>
+            <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight text-leaf-900 sm:text-6xl">
+              Take a pause.
+              <span className="block text-marigold-600">Someone is here to listen.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-700">
+              Write what&apos;s on your mind, in your own words. A verified listener, psychologist or doctor will reply gently, in their own time. Free, and anonymous if you like.
             </p>
 
-            <ul className="mt-6 space-y-3">
-              {doctorSupport.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-slate-700">
-                  <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <span className="text-sm leading-7">{item}</span>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link href="/patients" className="inline-flex items-center justify-center gap-2 rounded-full bg-leaf-700 px-7 py-4 text-base font-semibold text-white shadow-lg shadow-leaf-900/15 transition hover:bg-leaf-800">
+                Share what&apos;s on your mind
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="#for-professionals" className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-semibold text-leaf-800 transition hover:bg-sand-100">
+                I&apos;m a professional who wants to help
+              </Link>
+            </div>
+
+            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
+              {["Always free", "Use any name", "Verified guides", "No rush"].map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-marigold-500" />
+                  {item}
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-3xl border border-emerald-200 bg-white p-6 shadow-inner">
-            <div className="flex items-center justify-between">
-              <h4 className="text-lg font-semibold text-slate-900">How guides are verified</h4>
-              <div className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Verified only
-              </div>
+          {/* A slow breathing circle, with an example of how a conversation feels */}
+          <div className="relative mx-auto w-full max-w-sm">
+            <div className="relative flex aspect-square items-center justify-center">
+              <div className="breathe absolute inset-0 rounded-full bg-gradient-to-br from-marigold-400/40 to-leaf-700/25" />
+              <div className="absolute inset-10 rounded-full bg-sand-50/80" />
+              <p className="relative text-center font-display text-xl italic text-leaf-800">
+                breathe in…
+                <span className="block">and out</span>
+              </p>
             </div>
-
-            <ol className="mt-6 space-y-4">
-              {verificationSteps.map((step, index) => (
-                <li key={step.title} className="flex gap-4 rounded-2xl border border-slate-200 p-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">{index + 1}</span>
-                  <div>
-                    <p className="font-semibold text-slate-800">{step.title}</p>
-                    <p className="mt-1 text-sm text-slate-600">{step.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-
-            <Link href="/doctors" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:underline">
-              See verified guides
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <figure className="relative -mt-16 ml-auto w-[85%] rounded-3xl border border-sand-200 bg-white p-5 shadow-xl shadow-leaf-900/5">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Example</p>
+              <blockquote className="mt-2 text-sm leading-6 text-slate-700">“I&apos;m so tired of pretending I&apos;m fine at home.”</blockquote>
+              <p className="mt-3 rounded-2xl bg-sand-100 p-3 text-sm leading-6 text-leaf-900">
+                That sounds exhausting to carry alone. You don&apos;t have to pretend here. What&apos;s been hardest lately?
+              </p>
+            </figure>
           </div>
         </div>
       </section>
 
-      <section id="join" className="mx-auto max-w-5xl px-5 py-10 pb-20">
-        <div className="rounded-[2rem] border border-emerald-200 bg-emerald-700 px-8 py-10 text-center text-white shadow-lg md:px-12">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-2xl">
-            🌱
-          </div>
-          <h3 className="mt-5 text-3xl font-bold tracking-tight">A calmer place to begin.</h3>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-emerald-50">
-            Whether you need support or want to help others, Thehrav is built for gentle conversations, respectful care,
-            and real human connection.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/patients" className="rounded-full bg-white px-6 py-3 font-semibold text-emerald-800 transition hover:bg-emerald-50">
-              Ask for support
-            </Link>
-            <Link href="/doctors/apply" className="rounded-full border border-white/50 px-6 py-3 font-semibold text-white transition hover:bg-white/5">
-              Offer guidance
-            </Link>
-          </div>
+      {/* What people bring */}
+      <section className="border-y border-sand-200 bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-16 text-center">
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-leaf-900 sm:text-4xl">Whatever you&apos;re carrying, it&apos;s welcome here.</h2>
+          <p className="mx-auto mt-3 max-w-xl text-slate-600">Big or small, new or years old. You don&apos;t need the right words or a diagnosis to start.</p>
+          <ul className="mx-auto mt-8 flex max-w-4xl flex-wrap justify-center gap-3">
+            {carrying.map((item) => (
+              <li key={item}>
+                <Link href="/patients" className="block rounded-full border border-sand-200 bg-sand-50 px-5 py-2.5 text-sm text-slate-700 transition hover:border-marigold-400 hover:bg-white hover:text-leaf-900">
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      <footer className="border-t border-slate-200 bg-white/80">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-sm text-slate-600">
+      {/* How it works */}
+      <section className="mx-auto max-w-6xl px-5 py-20">
+        <h2 className="font-display text-3xl font-semibold tracking-tight text-leaf-900 sm:text-4xl">How it works</h2>
+        <ol className="mt-10 grid gap-8 md:grid-cols-3">
+          {steps.map(({ icon: Icon, title, text }, index) => (
+            <li key={title} className="relative">
+              <div className="flex items-center gap-4">
+                <span className="font-display text-5xl font-semibold text-marigold-400">{index + 1}</span>
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-leaf-700/10 text-leaf-700"><Icon className="h-5 w-5" /></span>
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-leaf-900">{title}</h3>
+              <p className="mt-2 leading-7 text-slate-600">{text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Promises */}
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="grid gap-4 rounded-[2rem] bg-sand-100 p-6 sm:grid-cols-2 md:p-10 lg:grid-cols-4">
+          {promises.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="rounded-3xl bg-white p-6">
+              <Icon className="h-6 w-6 text-marigold-600" />
+              <h3 className="mt-4 font-display text-2xl font-semibold text-leaf-900">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* For professionals */}
+      <section id="for-professionals" className="scroll-mt-20 bg-leaf-900 text-sand-50">
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <p>Thehrav</p>
-            <p className="mt-1 text-xs text-slate-500">
-              Not an emergency service. In crisis? {CRISIS_LINES}
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-marigold-400">For psychologists, doctors and trained listeners</p>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+              Give an hour when you can. It may be the reply someone has been waiting for.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-8 text-sand-100/80">
+              Thehrav connects your care with people across India who need someone to talk to, for free, without the rush of a clinic.
+            </p>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {helperReasons.map(({ icon: Icon, title, text }) => (
+                <div key={title}>
+                  <Icon className="h-5 w-5 text-marigold-400" />
+                  <h3 className="mt-3 font-semibold">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-sand-100/70">{text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <Link href="/doctors/apply" className="inline-flex items-center justify-center gap-2 rounded-full bg-marigold-400 px-7 py-4 font-semibold text-leaf-900 transition hover:bg-marigold-500">
+                Become a guide
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/doctors" className="inline-flex items-center justify-center rounded-full border border-sand-50/25 px-7 py-4 font-semibold text-sand-50 transition hover:bg-white/5">
+                Meet our guides
+              </Link>
+            </div>
+          </div>
+
+          <div className="self-center rounded-[2rem] bg-white/5 p-6 ring-1 ring-white/10 md:p-8">
+            <h3 className="font-display text-2xl font-semibold">Who can join</h3>
+            <ul className="mt-6 space-y-4">
+              {(Object.keys(GUIDE_TYPES) as GuideType[]).map((type) => {
+                const Icon = roleIcons[type];
+                return (
+                  <li key={type} className="flex gap-4 rounded-2xl bg-white/5 p-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-marigold-400/15 text-marigold-400"><Icon className="h-5 w-5" /></span>
+                    <div>
+                      <p className="font-semibold">{GUIDE_TYPES[type].label}</p>
+                      <p className="mt-1 text-sm leading-6 text-sand-100/70">{roleWho[type]}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-6 flex items-start gap-2 text-sm leading-6 text-sand-100/70">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+              Every application is reviewed by a moderator, and registrations are checked on the official register.
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/privacy" className="hover:text-emerald-700">Privacy</Link>
-            <Link href="/terms" className="hover:text-emerald-700">Terms</Link>
-            <Link href="/grievance" className="hover:text-emerald-700">Grievances</Link>
-            <TimerReset className="h-4 w-4 text-emerald-600" />
-            <span>Support without pressure</span>
-          </div>
+        </div>
+      </section>
+
+      {/* Closing */}
+      <section className="mx-auto max-w-3xl px-5 py-24 text-center">
+        <p lang="hi" className="font-devanagari text-4xl text-marigold-600">ठहराव</p>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-leaf-900 sm:text-5xl">Whenever you&apos;re ready, we&apos;re here.</h2>
+        <p className="mt-4 text-lg text-slate-600">No hurry. Write a few lines, or a lot. Someone will read every word.</p>
+        <Link href="/patients" className="mt-8 inline-flex items-center gap-2 rounded-full bg-leaf-700 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-leaf-900/15 transition hover:bg-leaf-800">
+          Share what&apos;s on your mind
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+        <p className="mx-auto mt-10 max-w-xl rounded-2xl bg-sand-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          Thehrav isn&apos;t for emergencies. If you might hurt yourself or you&apos;re in danger: {CRISIS_LINES}
+        </p>
+      </section>
+
+      <footer className="border-t border-sand-200 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            <span className="font-display font-semibold text-leaf-900">Thehrav</span>
+            <span className="text-slate-400"> · a quiet place to be heard</span>
+          </p>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/doctors/apply" className="hover:text-leaf-700">Become a guide</Link>
+            <Link href="/privacy" className="hover:text-leaf-700">Privacy</Link>
+            <Link href="/terms" className="hover:text-leaf-700">Terms</Link>
+            <Link href="/grievance" className="hover:text-leaf-700">Grievances</Link>
+          </nav>
         </div>
       </footer>
     </main>

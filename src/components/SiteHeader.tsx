@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import Logo from "@/components/Logo";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 
@@ -14,7 +15,8 @@ export default function SiteHeader() {
 
   const links = [
     { href: "/patients", label: "Get support" },
-    { href: "/doctors", label: "Doctors" },
+    { href: "/doctors", label: "Our guides" },
+    ...(member.status === "signed-in" ? [] : [{ href: "/doctors/apply", label: "Become a guide" }]),
     ...(member.status === "signed-in" ? [{ href: "/inbox", label: "Inbox" }] : []),
     ...(role === "moderator" ? [{ href: "/moderation", label: "Moderation" }] : []),
     ...(member.status === "signed-in" ? [{ href: "/account", label: "Account" }] : []),
@@ -27,11 +29,11 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-sand-200/70 bg-sand-50/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 text-lg shadow-sm">🌿</span>
-          <span className="text-lg font-semibold tracking-tight text-emerald-900">Thehrav</span>
+          <Logo />
+          <span className="font-display text-xl font-semibold tracking-tight text-leaf-900">Thehrav</span>
         </Link>
 
         <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto text-sm font-medium text-slate-600 sm:order-none sm:w-auto">
@@ -39,7 +41,7 @@ export default function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap rounded-full px-3 py-1.5 transition hover:text-emerald-700 ${pathname === link.href ? "bg-emerald-50 text-emerald-800" : ""}`}
+              className={`whitespace-nowrap rounded-full px-3 py-1.5 transition hover:text-leaf-700 ${pathname === link.href ? "bg-sand-100 text-leaf-800" : ""}`}
             >
               {link.label}
             </Link>
@@ -56,7 +58,7 @@ export default function SiteHeader() {
               </button>
             </>
           ) : member.status === "signed-out" ? (
-            <Link href="/auth" className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
+            <Link href="/auth" className="rounded-full bg-leaf-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-leaf-800">
               Sign in
             </Link>
           ) : null}
