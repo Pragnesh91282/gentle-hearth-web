@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LockKeyhole } from "lucide-react";
 import Turnstile, { TURNSTILE_SITE_KEY } from "@/components/Turnstile";
+import { generateIdentity } from "@/lib/safetyAndIdentity";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 
@@ -28,6 +29,14 @@ export default function AuthPage() {
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaAttempt, setCaptchaAttempt] = useState(0);
   const needsCaptcha = Boolean(TURNSTILE_SITE_KEY) && !captchaToken;
+
+  // Links such as the request form's "Continue" open straight on sign-up.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("mode") === "sign-up") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the URL is only readable after mount
+      setMode("sign-up");
+    }
+  }, []);
 
   // Covers returning from an email confirmation link, which signs the user in.
   useEffect(() => {
@@ -64,9 +73,10 @@ export default function AuthPage() {
           options: {
             captchaToken: captcha,
             // Records the 18+ declaration made at sign-up.
-            data: { display_name: displayName || undefined, age_confirmed_at: new Date().toISOString() },
-            // Confirmation links return to whichever domain the user signed up on.
-            emailRedirectTo: `${window.location.origin}/auth`,
+            // Members stay anonymous unless they choose a name themselves.
+            data: { display_name: displayName.trim() || generateIdentity().handle, age_confirmed_at: new Date().toISOString() },
+            // Confirmation links return to the same domain and page the user signed up from.
+            emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}`,
           },
         });
 
@@ -77,7 +87,7 @@ export default function AuthPage() {
     if (result.error) {
       setError(result.error.message);
     } else if (mode === "sign-up") {
-      setMessage("Account created. Check your email if confirmation is enabled, then sign in to continue.");
+      setMessage("Account created. Check your email for a confirmation link; it brings you straight back here.");
     } else {
       router.push(nextPath());
       router.refresh();
@@ -95,7 +105,11 @@ export default function AuthPage() {
           </div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Private support space</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight">{mode === "sign-in" ? "Welcome back." : "Create a safe account."}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">Your conversations should only be visible to you and the verified professional you choose.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            {mode === "sign-up"
+              ? "Free, and anonymous if you like. Your email is only for signing in: guides never see it."
+              : "Your conversations are visible only to you and the guide who accepts your request."}
+          </p>
 
           <div className="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1 text-sm font-semibold">
             <button type="button" onClick={() => setMode("sign-in")} className={`rounded-lg px-3 py-2 ${mode === "sign-in" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-500"}`}>Sign in</button>
@@ -105,8 +119,12 @@ export default function AuthPage() {
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {mode === "sign-up" && (
               <div>
-                <label htmlFor="display-name" className="mb-2 block text-sm font-semibold text-slate-700">Name shown to your support team</label>
-                <input id="display-name" value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="field" placeholder="Your first name or preferred name" />
+                <label htmlFor="display-name" className="mb-2 block text-sm font-semibold text-slate-700">Name shown to guides</label>
+                <div className="flex gap-2">
+                  <input id="display-name" maxLength={40} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="field" placeholder="Any name you like" />
+                  <button type="button" onClick={() => setDisplayName(generateIdentity().handle)} className="shrink-0 rounded-xl border border-slate-200 px-3 text-xs font-semibold text-slate-600 hover:bg-slate-50">Suggest one</button>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">It doesn&apos;t need to be your real name. Leave it blank and we&apos;ll give you a gentle anonymous one.</p>
               </div>
             )}
             <div>

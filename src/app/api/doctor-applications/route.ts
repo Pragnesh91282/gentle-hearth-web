@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const credentials = text(body?.credentials, 500);
   const bio = text(body?.bio, 1500);
   const availability = text(body?.availability, 120) || "By arrangement";
-  const supportMode = text(body?.supportMode, 120) || "Free or low-cost";
+  const supportMode = text(body?.supportMode, 120) || "Free";
   const specialties = Array.isArray(body?.specialties)
     ? body.specialties.filter((item: unknown): item is string => typeof item === "string").map((item: string) => item.trim().slice(0, 60)).filter(Boolean).slice(0, 8)
     : [];
