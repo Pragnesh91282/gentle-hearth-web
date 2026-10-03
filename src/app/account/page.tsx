@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserRound } from "lucide-react";
@@ -15,6 +15,31 @@ export default function AccountPage() {
   const [confirmation, setConfirmation] = useState("");
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  // null until loaded from the profile.
+  const [emailNotifications, setEmailNotifications] = useState<boolean | null>(null);
+  const [emailError, setEmailError] = useState("");
+
+  const userId = member.profile?.id;
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    if (!supabase || !userId) return;
+    void supabase.from("profiles").select("email_notifications").eq("id", userId).maybeSingle()
+      .then(({ data }) => setEmailNotifications(data?.email_notifications ?? true));
+  }, [userId]);
+
+  async function toggleEmails(next: boolean) {
+    setEmailError("");
+    setEmailNotifications(next);
+    const response = await fetch("/api/account", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailNotifications: next }),
+    }).catch(() => null);
+    if (!response?.ok) {
+      setEmailNotifications(!next);
+      setEmailError("We could not save this setting. Please try again.");
+    }
+  }
 
   async function handleDelete(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,6 +79,24 @@ export default function AccountPage() {
           <p className="mt-3 text-sm leading-6 text-slate-600">
             Read how we handle your data in our <Link className="underline" href="/privacy">privacy notice</Link>. Questions or complaints go to our <Link className="underline" href="/grievance">Grievance Officer</Link>.
           </p>
+        </section>
+
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-xl font-bold">Emails</h2>
+          <label className="mt-4 flex items-start gap-3 text-sm leading-6 text-slate-700">
+            <input
+              type="checkbox"
+              checked={emailNotifications ?? true}
+              disabled={emailNotifications === null}
+              onChange={(event) => void toggleEmails(event.target.checked)}
+              className="mt-1 h-4 w-4 accent-emerald-700"
+            />
+            <span>
+              Email me when there&apos;s a new message for me, at most once every few hours per conversation.
+              <span className="block text-xs text-slate-500">Emails never include what anyone wrote.</span>
+            </span>
+          </label>
+          {emailError && <p role="alert" className="mt-3 rounded-2xl bg-rose-50 p-3 text-sm text-rose-900">{emailError}</p>}
         </section>
 
         <section className="rounded-[2rem] border border-rose-200 bg-white p-8 shadow-sm">

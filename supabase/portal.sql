@@ -194,3 +194,9 @@ begin
 end;
 $$;
 update public.profiles set display_name = 'Thehrav member' where display_name = 'Gentle Hearth member';
+
+-- Email when a guide replies (src/lib/notify.ts): an opt-out per member,
+-- and when each participant was last emailed about a conversation.
+alter table public.profiles add column if not exists email_notifications boolean not null default true;
+alter table public.conversations add column if not exists patient_notified_at timestamptz;
+alter table public.conversations add column if not exists doctor_notified_at timestamptz;
