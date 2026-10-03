@@ -24,3 +24,21 @@ export async function DELETE() {
 
   return NextResponse.json({ ok: true });
 }
+
+// Updates the member's own preferences.
+export async function PATCH(request: Request) {
+  const body = await request.json().catch(() => null);
+  if (typeof body?.emailNotifications !== "boolean") {
+    return jsonError("Choose whether to receive emails.", 400);
+  }
+
+  const { user, admin, response } = await requireUser();
+  if (response) return response;
+
+  const { error } = await admin.from("profiles").update({ email_notifications: body.emailNotifications }).eq("id", user.id);
+  if (error) {
+    return jsonError("We could not save this setting.", 500);
+  }
+
+  return NextResponse.json({ ok: true });
+}

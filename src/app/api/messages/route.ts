@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { CRISIS_MESSAGE, detectCrisis } from "@/lib/safetyAndIdentity";
 import { jsonError, requireUser } from "@/lib/apiAuth";
+import { notifyByEmail } from "@/lib/notify";
 import { isRateLimited } from "@/lib/rateLimit";
 
 export async function POST(request: Request) {
@@ -46,6 +47,10 @@ export async function POST(request: Request) {
   if (error || !saved) {
     return jsonError("We could not send that message.", 500);
   }
+
+  // Lets the other person know by email, after the response is sent.
+  const recipientRole = conversation.patient_id === user.id ? "doctor" : "patient";
+  after(() => notifyByEmail(admin, conversationId, recipientRole, "reply").catch((error) => console.error("Reply email failed", error)));
 
   // Only the member who wrote it is pointed to emergency services.
   const showResources = conversation.patient_id === user.id && detectCrisis(message);
