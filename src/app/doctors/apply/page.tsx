@@ -111,7 +111,7 @@ export default function DoctorApplyPage() {
           </div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-700">For doctors and guides</p>
           <h1 className="mt-3 font-display text-3xl font-semibold text-leaf-900 tracking-tight">{application ? "Your guide profile" : "Apply to offer guidance"}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">A moderator reviews every application before you can accept requests. Registered doctors and psychologists are checked against the official register, and patients see your name and registration number, as India&apos;s Telemedicine Practice Guidelines require. Patients never see your email.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">A moderator reviews every application before you can accept requests. Registered doctors and psychologists are checked against the official register, and patients see your name and registration number, as India&apos;s Telemedicine Practice Guidelines require. Patients never see your email. Every guide agrees to meet members with goodwill and equal regard, and never to promote any religion, belief or practice (see our <Link href="/principles" className="underline">principles</Link>).</p>
 
           {status && (
             <div role="status" className={`mt-6 flex items-start gap-3 rounded-2xl border p-4 text-sm ${status.tone}`}>

@@ -6,6 +6,7 @@ const PUBLIC_PAGES: { path: string; priority: number }[] = [
   { path: "/patients", priority: 0.9 },
   { path: "/doctors", priority: 0.8 },
   { path: "/doctors/apply", priority: 0.7 },
+  { path: "/principles", priority: 0.6 },
   { path: "/privacy", priority: 0.3 },
   { path: "/terms", priority: 0.3 },
   { path: "/grievance", priority: 0.3 },

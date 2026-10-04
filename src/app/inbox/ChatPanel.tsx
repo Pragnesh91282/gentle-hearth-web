@@ -256,7 +256,7 @@ function GuideNotice({ guide, isDoctor }: { guide: GuideDetails; isDoctor: boole
   return (
     <p className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3 text-xs leading-5 text-emerald-950">
       {isDoctor ? (
-        <>You&apos;re supporting this member as a <span className="font-semibold">{label.toLowerCase()}</span>. {scope}</>
+        <>You&apos;re supporting this member as a <span className="font-semibold">{label.toLowerCase()}</span>. {scope} Meet them with goodwill, and never promote any religion or belief.</>
       ) : (
         <>
           <span className="font-semibold">{registration && guide.full_name ? `${guide.full_name}, ${label.toLowerCase()}` : label}</span>
