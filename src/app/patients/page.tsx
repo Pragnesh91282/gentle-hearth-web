@@ -127,7 +127,7 @@ export default function PatientsPage() {
 
             <h1 className="font-display text-4xl font-semibold tracking-tight text-leaf-900">Tell us what feels heavy right now.</h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
-              You are not asking for too much. Share a little about what you are carrying, and we will match you with a supportive doctor or guide who can respond gently and without pressure.
+              Asking for help takes courage, and you are not asking for too much. Share a little about what you are carrying, and a guide will respond gently, without judgment or pressure.
             </p>
 
             {restoredDraft && (
@@ -230,9 +230,10 @@ export default function PatientsPage() {
               </div>
 
               <ul className="space-y-3 text-sm text-slate-200">
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Respectful listening with no pressure</li>
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Free to use, with no pressure to continue</li>
-                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> A calm, nonjudgmental environment</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Goodwill and listening, without judgment</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Equal care, whatever your faith or background</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> Free, and you owe nothing in return</li>
+                <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" /> No religion or belief is ever promoted</li>
               </ul>
             </div>
 

@@ -21,10 +21,10 @@ function guideSubtitle(doctor: DoctorProfile) {
 }
 
 const offerings = [
-  "Offer general emotional guidance and listening support",
-  "Respond to questions without creating pressure or guilt",
-  "Offer free support to people who might never reach a clinic",
-  "Create a calmer entry point for professional mental support",
+  "Meet every person with goodwill and equal regard",
+  "Give freely, without expecting anything in return",
+  "Listen without pressure, guilt or judgment",
+  "Never promote any religion, belief or practice",
 ];
 
 export default function DoctorsPage() {

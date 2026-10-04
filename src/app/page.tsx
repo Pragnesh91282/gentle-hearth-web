@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import InstallApp from "@/components/InstallApp";
 import { GUIDE_TYPES, type GuideType } from "@/lib/guides";
+import { BELIEF_NOTE, PRINCIPLES } from "@/lib/principles";
 import { CRISIS_LINES } from "@/lib/safetyAndIdentity";
 
 // Situations people recognise themselves in, in their own words.
@@ -168,6 +169,29 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Principles of compassion, in everyday words */}
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-marigold-600">Our principles</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-leaf-900 sm:text-4xl">Built on compassion</h2>
+            <p className="mt-4 leading-7 text-slate-600">{BELIEF_NOTE}</p>
+            <Link href="/principles" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-leaf-700 hover:underline">
+              Read all our principles
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {PRINCIPLES.slice(0, 4).map((principle) => (
+              <li key={principle.title} className="rounded-3xl border border-sand-200 bg-white p-6">
+                <h3 className="font-display text-xl font-semibold text-leaf-900">{principle.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{principle.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* For professionals */}
       <section id="for-professionals" className="scroll-mt-20 bg-leaf-900 text-sand-50">
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 lg:grid-cols-[1.1fr_0.9fr]">
@@ -177,7 +201,7 @@ export default function Page() {
               Give an hour when you can. It may be the reply someone has been waiting for.
             </h2>
             <p className="mt-5 max-w-xl text-lg leading-8 text-sand-100/80">
-              Thehrav connects your care with people across India who need someone to talk to, for free, without the rush of a clinic.
+              Thehrav connects your care with people across India who need someone to talk to. Give freely, without expecting anything back, and meet each person with the same goodwill, whoever they are.
             </p>
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
               {helperReasons.map(({ icon: Icon, title, text }) => (
@@ -245,6 +269,7 @@ export default function Page() {
             <span className="text-slate-400"> · a quiet place to be heard</span>
           </p>
           <nav className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/principles" className="hover:text-leaf-700">Our principles</Link>
             <Link href="/doctors/apply" className="hover:text-leaf-700">Become a guide</Link>
             <Link href="/privacy" className="hover:text-leaf-700">Privacy</Link>
             <Link href="/terms" className="hover:text-leaf-700">Terms</Link>
