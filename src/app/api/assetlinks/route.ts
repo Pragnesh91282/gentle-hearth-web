@@ -8,10 +8,13 @@ import { NextResponse } from "next/server";
 //                              Play app signing key and the upload key
 export function GET() {
   const packageName = process.env.ANDROID_PACKAGE_NAME?.trim();
-  const fingerprints = (process.env.ANDROID_CERT_FINGERPRINTS ?? "")
+  // Accepts the value pasted on its own or copied from an assetlinks.json
+  // array (["AB:CD:…"]); brackets and quotes are ignored.
+  const fingerprints = [...new Set((process.env.ANDROID_CERT_FINGERPRINTS ?? "")
+    .replace(/[[\]"'\s]/g, "")
     .split(",")
-    .map((value) => value.trim().toUpperCase())
-    .filter(Boolean);
+    .map((value) => value.toUpperCase())
+    .filter((value) => /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(value)))];
 
   const statements = packageName && fingerprints.length
     ? [{
