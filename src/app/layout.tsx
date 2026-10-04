@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import RecoveryRedirect from "@/components/RecoveryRedirect";
 import ServiceWorker from "@/components/ServiceWorker";
 import SiteHeader from "@/components/SiteHeader";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Analytics />
         <ServiceWorker />
+        <RecoveryRedirect />
       </body>
     </html>
   );
