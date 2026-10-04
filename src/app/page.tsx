@@ -14,6 +14,7 @@ import {
   UserRoundCheck,
 } from "lucide-react";
 import Link from "next/link";
+import InstallApp from "@/components/InstallApp";
 import { GUIDE_TYPES, type GuideType } from "@/lib/guides";
 import { CRISIS_LINES } from "@/lib/safetyAndIdentity";
 
@@ -231,6 +232,7 @@ export default function Page() {
           Share what&apos;s on your mind
           <ArrowRight className="h-4 w-4" />
         </Link>
+        <InstallApp />
         <p className="mx-auto mt-10 max-w-xl rounded-2xl bg-sand-100 px-5 py-4 text-sm leading-6 text-slate-600">
           Thehrav isn&apos;t for emergencies. If you might hurt yourself or you&apos;re in danger: {CRISIS_LINES}
         </p>
