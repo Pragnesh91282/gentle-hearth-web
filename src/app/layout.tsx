@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import ServiceWorker from "@/components/ServiceWorker";
 import SiteHeader from "@/components/SiteHeader";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -41,6 +42,11 @@ export const metadata: Metadata = {
     locale: "en_IN",
   },
   twitter: { card: "summary_large_image" },
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1f5c46",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -53,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteHeader />
         {children}
         <Analytics />
+        <ServiceWorker />
       </body>
     </html>
   );
