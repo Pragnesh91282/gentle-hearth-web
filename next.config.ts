@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["100.115.92.26"],
+  async rewrites() {
+    return [{ source: "/.well-known/assetlinks.json", destination: "/api/assetlinks" }];
+  },
   async headers() {
     return [
       {

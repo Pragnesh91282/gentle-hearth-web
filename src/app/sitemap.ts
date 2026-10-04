@@ -9,6 +9,7 @@ const PUBLIC_PAGES: { path: string; priority: number }[] = [
   { path: "/privacy", priority: 0.3 },
   { path: "/terms", priority: 0.3 },
   { path: "/grievance", priority: 0.3 },
+  { path: "/delete-account", priority: 0.2 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

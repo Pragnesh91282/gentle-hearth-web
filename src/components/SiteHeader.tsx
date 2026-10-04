@@ -15,7 +15,7 @@ export default function SiteHeader() {
 
   const links = [
     { href: "/patients", label: "Get support" },
-    { href: "/doctors", label: "Our guides" },
+    { href: "/doctors", label: "Guides" },
     ...(member.status === "signed-in" ? [] : [{ href: "/doctors/apply", label: "Become a guide" }]),
     ...(member.status === "signed-in" ? [{ href: "/inbox", label: "Inbox" }] : []),
     ...(role === "moderator" ? [{ href: "/moderation", label: "Moderation" }] : []),
@@ -41,7 +41,7 @@ export default function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap rounded-full px-3 py-1.5 transition hover:text-leaf-700 ${pathname === link.href ? "bg-sand-100 text-leaf-800" : ""}`}
+              className={`whitespace-nowrap rounded-full px-2.5 py-1.5 transition sm:px-3 hover:text-leaf-700 ${pathname === link.href ? "bg-sand-100 text-leaf-800" : ""}`}
             >
               {link.label}
             </Link>
