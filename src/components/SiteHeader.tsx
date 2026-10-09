@@ -31,12 +31,18 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-sand-200/70 bg-sand-50/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-        <Link href="/" className="flex items-center gap-3">
+        {/* In the app, the logo leads to the app home; on the website, to the home page. */}
+        <Link href="/" className="flex items-center gap-3 app:hidden">
+          <Logo />
+          <span className="font-display text-xl font-semibold tracking-tight text-leaf-900">Thehrav</span>
+        </Link>
+        <Link href="/app" className="hidden items-center gap-3 app:flex">
           <Logo />
           <span className="font-display text-xl font-semibold tracking-tight text-leaf-900">Thehrav</span>
         </Link>
 
-        <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto text-sm font-medium text-slate-600 sm:order-none sm:w-auto">
+        {/* The app has a bottom tab bar instead. */}
+        <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto text-sm font-medium text-slate-600 sm:order-none sm:w-auto app:hidden">
           {links.map((link) => (
             <Link
               key={link.href}

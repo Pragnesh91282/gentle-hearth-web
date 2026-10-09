@@ -262,13 +262,14 @@ export default function Page() {
         </p>
       </section>
 
-      <footer className="border-t border-sand-200 bg-white">
+      <footer className="border-t border-sand-200 bg-white app:hidden">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
           <p>
             <span className="font-display font-semibold text-leaf-900">Thehrav</span>
             <span className="text-slate-400"> · a quiet place to be heard</span>
           </p>
           <nav className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/pause" className="hover:text-leaf-700">Take a pause</Link>
             <Link href="/principles" className="hover:text-leaf-700">Our principles</Link>
             <Link href="/doctors/apply" className="hover:text-leaf-700">Become a guide</Link>
             <Link href="/privacy" className="hover:text-leaf-700">Privacy</Link>

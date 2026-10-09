@@ -9,7 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${SITE_NAME}: ${SITE_TAGLINE}`,
     short_name: SITE_NAME,
     description: SITE_DESCRIPTION,
-    start_url: "/",
+    // Opens on the app home; ?source=app turns on the app layout (src/lib/appMode.ts).
+    start_url: "/app?source=app",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
@@ -25,6 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
     shortcuts: [
       { name: "Share what's on your mind", url: "/patients", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
       { name: "Inbox", url: "/inbox", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Take a pause", url: "/pause", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
     ],
   };
 }
