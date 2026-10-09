@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import AppTabBar from "@/components/AppTabBar";
 import RecoveryRedirect from "@/components/RecoveryRedirect";
 import ServiceWorker from "@/components/ServiceWorker";
 import SiteHeader from "@/components/SiteHeader";
+import { APP_MODE_SCRIPT } from "@/lib/appMode";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -55,10 +57,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} h-full antialiased`}
+      // APP_MODE_SCRIPT may add data-app before React hydrates.
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: APP_MODE_SCRIPT }} />
+      </head>
+      <body className="min-h-full flex flex-col app:pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <SiteHeader />
         {children}
+        <AppTabBar />
         <Analytics />
         <ServiceWorker />
         <RecoveryRedirect />
