@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // Digital Asset Links: proves to Android that the Play Store app and this
 // site belong together, so the app opens full-screen without a URL bar.
 // Served at /.well-known/assetlinks.json (see next.config.ts). Set in Vercel:
-//   ANDROID_PACKAGE_NAME       e.g. com.thehrav.app
+//   ANDROID_PACKAGE_NAME       com.thehrav_thementalhealthsupport.twa
 //   ANDROID_CERT_FINGERPRINTS  SHA-256 fingerprints, comma-separated: the
 //                              Play app signing key and the upload key
 export function GET() {

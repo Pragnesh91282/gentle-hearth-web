@@ -1,6 +1,8 @@
 # Thehrav on Google Play
 
-The Android app is a Trusted Web Activity (TWA): a thin Android shell that opens https://thehrav-thementalhealthsupport.com full-screen. Website updates reach the app straight away; only icon, name, or package changes need a new upload.
+The Android app is a Trusted Web Activity (TWA): a thin Android shell that opens https://thehrav-thementalhealthsupport.com full-screen, starting on the app home at `/app?source=app`. Inside the app, Thehrav shows app-only screens: the app home, a bottom tab bar, and offline breathing and grounding exercises. Website updates reach the app straight away; only icon, name, start URL, or package changes need a new upload.
+
+Published so far: **Indus Appstore** (package `com.thehrav_thementalhealthsupport.twa`).
 
 Everything to paste into Play Console is in this file. Images are in this folder.
 
@@ -11,7 +13,10 @@ Everything to paste into Play Console is in this file. Images are in this folder
 
    | Setting | Value |
    | --- | --- |
-   | Package ID | `com.thehrav.app` (permanent: it can never change after the first upload) |
+   | Package ID | `com.thehrav_thementalhealthsupport.twa` (permanent: every store and every update must use exactly this) |
+   | Start URL | `/app?source=app` |
+   | App version / version code | Start at `1.0.0` / `1`; see section 7 for updates |
+   | Notification delegation | On |
    | App name | `Thehrav` |
    | Launcher name | `Thehrav` |
    | Theme colour | `#1F5C46` |
@@ -31,8 +36,8 @@ Everything to paste into Play Console is in this file. Images are in this folder
 
 1. In Play Console, open **Test and release → App integrity → App signing**, and copy the **SHA-256** of both the **app signing key** and the **upload key**.
 2. In **Vercel → Settings → Environment Variables**, add for Production:
-   - `ANDROID_PACKAGE_NAME` = `com.thehrav.app`
-   - `ANDROID_CERT_FINGERPRINTS` = both SHA-256 values, separated by a comma
+   - `ANDROID_PACKAGE_NAME` = `com.thehrav_thementalhealthsupport.twa`
+   - `ANDROID_CERT_FINGERPRINTS` = the existing fingerprint (from the PWABuilder zip's `assetlinks.json`) plus both Play SHA-256 values, separated by commas. Brackets and quotes are ignored, so values can be pasted straight from `assetlinks.json`
 3. Redeploy, then check https://thehrav-thementalhealthsupport.com/.well-known/assetlinks.json shows the package name and both fingerprints.
 
 If the app shows a browser address bar at the top, the fingerprints don't match. Check them against App integrity again.
@@ -65,6 +70,12 @@ HOW IT WORKS
 • A guide picks it up and starts a private conversation with you.
 • Talk at your own pace. We email you when there's a new message, never with what was said.
 
+TAKE A PAUSE (WORKS OFFLINE)
+• Breathe: a guided breathing exercise. Breathe in for 4, out for 6, for 1, 3 or 5 minutes.
+• Ground: the 5-4-3-2-1 exercise for anxious or racing thoughts.
+• Today's thought: a gentle principle of compassion each day.
+Both exercises work without internet.
+
 WHY THEHRAV
 • Free: no fees, no subscriptions, no ads.
 • Anonymous: use any name you like. Guides never see your email.
@@ -87,7 +98,8 @@ Thehrav is for adults aged 18 and over.
 | --- | --- | --- |
 | App icon | `public/icons/icon-512.png` | 512 × 512 |
 | Feature graphic | `feature-graphic.png` | 1024 × 500 |
-| Phone screenshots | `screenshot-1-home.png` to `screenshot-4-for-guides.png` | 1080 × 1920 |
+| Phone screenshots (use these) | `app/1-app-home.png` to `app/4-share.png`: the app home, breathing, grounding, and sharing, with the tab bar | 1080 × 1920 |
+| Website screenshots (optional extras) | `screenshot-1-home.png` to `screenshot-4-for-guides.png` | 1080 × 1920 |
 
 **Category and contact**
 
@@ -137,3 +149,18 @@ Personal developer accounts created after November 2023 must run a **closed test
 3. After 14 days, apply for production access in Play Console, then promote the release.
 
 Use the testing period to check the app opens without an address bar, sign-up and the email link work, and the inbox, reply emails, and account deletion behave as on the website.
+
+## 7. Publishing an update
+
+Rebuild on PWABuilder whenever the start URL, icon, name, colours, or Android settings change. Website changes alone need no new upload.
+
+1. Use the same **Package ID**: `com.thehrav_thementalhealthsupport.twa`.
+2. Raise the **version code** by 1 and the **version name** (for example `1.0.1` → `1.0.2`). Stores refuse an upload whose version code isn't higher.
+3. Under **Signing key**, choose **Use mine** and upload the original `signing.keystore` with the passwords from `signing-key-info.txt`. A new key breaks the full-screen link and stores reject the update.
+4. Before uploading, open the new zip's `assetlinks.json` and check the package name and the fingerprint `06:87:30:2F:…:71:44` match what https://thehrav-thementalhealthsupport.com/.well-known/assetlinks.json serves.
+5. Upload the signed `.apk` (Indus, Galaxy Store) or `.aab` (Google Play).
+
+| Version | Code | Date | Change |
+| --- | --- | --- | --- |
+| 1.0.1 | 2 | 2026-10-11 | App home, tab bar, offline breathing and grounding; resubmitted to Indus |
+| 1.0.0 | 1 | 2026-10-05 | First Indus submission (rejected as a website wrapper) |
