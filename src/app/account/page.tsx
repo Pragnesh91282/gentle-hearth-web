@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserRound } from "lucide-react";
+import NotificationToggle from "@/components/NotificationToggle";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 
@@ -98,6 +99,8 @@ export default function AccountPage() {
           </label>
           {emailError && <p role="alert" className="mt-3 rounded-2xl bg-rose-50 p-3 text-sm text-rose-900">{emailError}</p>}
         </section>
+
+        <NotificationToggle />
 
         <section className="rounded-[2rem] border border-rose-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-bold text-rose-900">Delete my account</h2>

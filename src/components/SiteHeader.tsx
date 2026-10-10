@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import Logo from "@/components/Logo";
+import { turnOffNotificationsOnThisDevice } from "@/components/NotificationToggle";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 
@@ -23,6 +24,8 @@ export default function SiteHeader() {
   ];
 
   async function signOut() {
+    // A shared phone should stop showing this member's notifications.
+    await turnOffNotificationsOnThisDevice();
     await createSupabaseBrowserClient()?.auth.signOut();
     router.push("/");
     router.refresh();

@@ -200,3 +200,20 @@ update public.profiles set display_name = 'Thehrav member' where display_name = 
 alter table public.profiles add column if not exists email_notifications boolean not null default true;
 alter table public.conversations add column if not exists patient_notified_at timestamptz;
 alter table public.conversations add column if not exists doctor_notified_at timestamptz;
+
+-- Phone notifications (src/lib/notify.ts): one row per device that turned
+-- them on. Only the server (service role) reads or writes these.
+create table if not exists public.push_subscriptions (
+  endpoint text primary key,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  p256dh text not null,
+  auth text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists push_subscriptions_user_idx on public.push_subscriptions (user_id);
+alter table public.push_subscriptions enable row level security;
+revoke all on public.push_subscriptions from anon, authenticated;
+-- When each participant last got a notification about a conversation, so a
+-- quick back-and-forth doesn't buzz their phone for every message.
+alter table public.conversations add column if not exists patient_pushed_at timestamptz;
+alter table public.conversations add column if not exists doctor_pushed_at timestamptz;

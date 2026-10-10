@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { pushMessage, sendPush } from "@/lib/push";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 const FROM = process.env.EMAIL_FROM ?? `${SITE_NAME} <notifications@thehrav-thementalhealthsupport.com>`;
@@ -29,13 +30,11 @@ export function isValidUnsubscribe(userId: string, token: string) {
   return expected.length === given.length && timingSafeEqual(expected, given);
 }
 
-// Emails a participant that something happened in a conversation. Emails
-// never contain message text, and the subject never mentions mental health,
-// because many people share an inbox or a phone.
-export async function notifyByEmail(admin: SupabaseClient, conversationId: string, recipientRole: Role, kind: Kind) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return;
-
+// Lets a participant know something happened in a conversation, by email and
+// on any device where they turned on notifications. Neither ever contains
+// message text or mentions mental health, because many people share an inbox
+// or a phone.
+export async function notifyParticipant(admin: SupabaseClient, conversationId: string, recipientRole: Role, kind: Kind) {
   const { data: conversation } = await admin
     .from("conversations")
     .select("patient_id, doctor_id")
@@ -44,9 +43,7 @@ export async function notifyByEmail(admin: SupabaseClient, conversationId: strin
   if (!conversation) return;
   const recipientId: string = recipientRole === "patient" ? conversation.patient_id : conversation.doctor_id;
 
-  const { data: profile } = await admin.from("profiles").select("email_notifications").eq("id", recipientId).maybeSingle();
-  if (profile?.email_notifications === false) return;
-
+  // Someone who wrote here in the last few minutes is still in the conversation.
   if (kind === "reply") {
     const since = new Date(Date.now() - ACTIVE_MINUTES * 60_000).toISOString();
     const { count } = await admin
@@ -57,6 +54,22 @@ export async function notifyByEmail(admin: SupabaseClient, conversationId: strin
       .gte("created_at", since);
     if ((count ?? 0) > 0) return;
   }
+
+  const results = await Promise.allSettled([
+    sendEmail(admin, conversationId, recipientId, recipientRole, kind),
+    sendPush(admin, recipientId, conversationId, recipientRole, pushMessage(kind, conversationId)),
+  ]);
+  for (const result of results) {
+    if (result.status === "rejected") console.error("Notification failed", result.reason);
+  }
+}
+
+async function sendEmail(admin: SupabaseClient, conversationId: string, recipientId: string, recipientRole: Role, kind: Kind) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+
+  const { data: profile } = await admin.from("profiles").select("email_notifications").eq("id", recipientId).maybeSingle();
+  if (profile?.email_notifications === false) return;
 
   // Claims the send slot atomically, so two quick messages can't both email.
   const column = recipientRole === "patient" ? "patient_notified_at" : "doctor_notified_at";
