@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Feather, Inbox, Leaf, PenLine, Sprout } from "lucide-react";
+import NotificationToggle from "@/components/NotificationToggle";
 import { PRINCIPLES } from "@/lib/principles";
 import { useMember } from "@/lib/useMember";
 
@@ -75,6 +76,8 @@ export default function AppHome() {
             </div>
           </div>
         ) : null}
+
+        {signedIn && <NotificationToggle compact />}
 
         <section>
           <h2 className="px-1 text-sm font-semibold uppercase tracking-[0.18em] text-marigold-600">Take a pause</h2>

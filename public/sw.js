@@ -1,9 +1,10 @@
 // Thehrav service worker.
-// Stores only public pages that should work offline (the app home and the
+// Shows phone notifications (never with message text), and stores only
+// public pages that should work offline (the app home and the
 // breathing and grounding exercises), the offline page, and the static files
 // they need. Conversations, inbox, and account pages are never cached,
 // because a phone may be shared with others.
-const CACHE = "thehrav-v2";
+const CACHE = "thehrav-v3";
 const OFFLINE_URL = "/offline";
 const OFFLINE_PAGES = ["/app", "/pause", "/ground", OFFLINE_URL];
 const STATIC_PREFIXES = ["/_next/static/", "/icons/"];
@@ -82,4 +83,33 @@ self.addEventListener("fetch", (event) => {
       ),
     );
   }
+});
+
+// Phone notifications sent by src/lib/push.ts.
+self.addEventListener("push", (event) => {
+  const data = event.data ? event.data.json() : {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || "Thehrav", {
+      body: data.body || "You have a new message.",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/badge-96.png",
+      // A newer notification for the same conversation replaces the last.
+      tag: data.tag || "thehrav",
+      renotify: false,
+      data: { url: data.url || "/inbox" },
+    }),
+  );
+});
+
+// Opening a notification focuses an open Thehrav window, or opens one.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/inbox", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((client) => new URL(client.url).origin === self.location.origin);
+      if (open) return open.focus().then(() => open.navigate(target));
+      return self.clients.openWindow(target);
+    }),
+  );
 });

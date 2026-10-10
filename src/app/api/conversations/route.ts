@@ -1,6 +1,6 @@
 import { after, NextResponse } from "next/server";
 import { jsonError, requireUser } from "@/lib/apiAuth";
-import { notifyByEmail } from "@/lib/notify";
+import { notifyParticipant } from "@/lib/notify";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return jsonError("This request is no longer available.", 409);
   }
 
-  after(() => notifyByEmail(admin, conversationId, "patient", "accepted").catch((error) => console.error("Accepted email failed", error)));
+  after(() => notifyParticipant(admin, conversationId, "patient", "accepted").catch((error) => console.error("Accepted notification failed", error)));
 
   return NextResponse.json({ conversationId }, { status: 201 });
 }
