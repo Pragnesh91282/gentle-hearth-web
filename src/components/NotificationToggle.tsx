@@ -35,6 +35,16 @@ export async function turnOffNotificationsOnThisDevice() {
   }
 }
 
+// Stops notifications in this browser only; for a deleted account, whose
+// device records the server has already removed.
+export async function forgetThisDevice() {
+  try {
+    if ("serviceWorker" in navigator) await (await currentSubscription())?.unsubscribe();
+  } catch {
+    // Nothing to forget.
+  }
+}
+
 function save(subscription: PushSubscription) {
   return fetch("/api/push", {
     method: "POST",

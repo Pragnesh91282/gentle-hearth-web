@@ -117,14 +117,14 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f4faf6,_#eef8f3_30%,_#f8fafc_100%)] px-5 py-10 text-slate-900">
+    <main className="min-h-screen bg-sand-50 px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-md">
-        <section className="rounded-[2rem] border border-emerald-100 bg-white p-8 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <section className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-xl shadow-leaf-900/5">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-sand-100 text-leaf-700">
             <LockKeyhole className="h-5 w-5" />
           </div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Private support space</p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight">{mode === "sign-in" ? "Welcome back." : mode === "reset" ? "Reset your password." : "Create a safe account."}</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-700">Private support space</p>
+          <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-leaf-900">{mode === "sign-in" ? "Welcome back." : mode === "reset" ? "Reset your password." : "Create a safe account."}</h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">
             {mode === "sign-up"
               ? "Free, and anonymous if you like. Your email is only for signing in: guides never see it."
@@ -133,9 +133,9 @@ export default function AuthPage() {
                 : "Your conversations are visible only to you and the guide who accepts your request."}
           </p>
 
-          {mode !== "reset" && <div className="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1 text-sm font-semibold">
-            <button type="button" onClick={() => setMode("sign-in")} className={`rounded-lg px-3 py-2 ${mode === "sign-in" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-500"}`}>Sign in</button>
-            <button type="button" onClick={() => setMode("sign-up")} className={`rounded-lg px-3 py-2 ${mode === "sign-up" ? "bg-white text-emerald-800 shadow-sm" : "text-slate-500"}`}>Create account</button>
+          {mode !== "reset" && <div className="mt-6 grid grid-cols-2 rounded-xl bg-sand-100 p-1 text-sm font-semibold">
+            <button type="button" onClick={() => setMode("sign-in")} className={`rounded-lg px-3 py-2 ${mode === "sign-in" ? "bg-white text-leaf-800 shadow-sm" : "text-slate-500"}`}>Sign in</button>
+            <button type="button" onClick={() => setMode("sign-up")} className={`rounded-lg px-3 py-2 ${mode === "sign-up" ? "bg-white text-leaf-800 shadow-sm" : "text-slate-500"}`}>Create account</button>
           </div>}
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -144,7 +144,7 @@ export default function AuthPage() {
                 <label htmlFor="display-name" className="mb-2 block text-sm font-semibold text-slate-700">Name shown to guides</label>
                 <div className="flex gap-2">
                   <input id="display-name" maxLength={40} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="field" placeholder="Any name you like" />
-                  <button type="button" onClick={() => setDisplayName(generateIdentity().handle)} className="shrink-0 rounded-xl border border-slate-200 px-3 text-xs font-semibold text-slate-600 hover:bg-slate-50">Suggest one</button>
+                  <button type="button" onClick={() => setDisplayName(generateIdentity().handle)} className="shrink-0 rounded-xl border border-sand-200 px-3 text-xs font-semibold text-slate-600 hover:bg-sand-50">Suggest one</button>
                 </div>
                 <p className="mt-1 text-xs text-slate-500">It doesn&apos;t need to be your real name. Leave it blank and we&apos;ll give you a gentle anonymous one.</p>
               </div>
@@ -158,7 +158,7 @@ export default function AuthPage() {
                 <div className="mb-2 flex items-center justify-between">
                   <label htmlFor="password" className="block text-sm font-semibold text-slate-700">Password</label>
                   {mode === "sign-in" && (
-                    <button type="button" onClick={() => { setMode("reset"); setError(""); setMessage(""); }} className="text-xs font-semibold text-emerald-700 hover:underline">Forgot password?</button>
+                    <button type="button" onClick={() => { setMode("reset"); setError(""); setMessage(""); }} className="text-xs font-semibold text-leaf-700 hover:underline">Forgot password?</button>
                   )}
                 </div>
                 <input id="password" type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} className="field" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} />
@@ -166,20 +166,20 @@ export default function AuthPage() {
             )}
             {mode === "sign-up" && (
               <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
-                <input type="checkbox" checked={isAdult} onChange={(event) => setIsAdult(event.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" required />
+                <input type="checkbox" checked={isAdult} onChange={(event) => setIsAdult(event.target.checked)} className="mt-1 h-4 w-4 accent-leaf-700" required />
                 <span>I am 18 or older. If you are under 18, please call Tele-MANAS on 14416 or talk to a trusted adult.</span>
               </label>
             )}
             <Turnstile key={captchaAttempt} onToken={setCaptchaToken} />
-            <button type="submit" disabled={isSubmitting || needsCaptcha} className="w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
+            <button type="submit" disabled={isSubmitting || needsCaptcha} className="w-full rounded-full bg-leaf-700 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-leaf-800 disabled:cursor-not-allowed disabled:opacity-60">
               {isSubmitting ? "Please wait..." : mode === "sign-in" ? "Sign in securely" : mode === "reset" ? "Send reset link" : "Create account"}
             </button>
           </form>
           {mode === "reset" && (
-            <button type="button" onClick={() => { setMode("sign-in"); setError(""); setMessage(""); }} className="mt-4 text-sm font-semibold text-emerald-700 hover:underline">Back to sign in</button>
+            <button type="button" onClick={() => { setMode("sign-in"); setError(""); setMessage(""); }} className="mt-4 text-sm font-semibold text-leaf-700 hover:underline">Back to sign in</button>
           )}
 
-          {message && <p role="status" className="mt-4 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900">{message}</p>}
+          {message && <p role="status" className="mt-4 rounded-2xl bg-sand-100 p-4 text-sm text-leaf-900">{message}</p>}
           {error && <p role="alert" className="mt-4 rounded-2xl bg-rose-50 p-4 text-sm text-rose-900">{error}</p>}
           <p className="mt-6 text-xs leading-5 text-slate-500">By continuing, you agree to our <Link className="underline" href="/terms">terms</Link> and <Link className="underline" href="/privacy">privacy notice</Link>.</p>
         </section>

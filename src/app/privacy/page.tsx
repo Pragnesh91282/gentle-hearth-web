@@ -1,11 +1,16 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Privacy notice",
+  description: "How Thehrav handles what you share, who can see it, and how to delete your account.",
+};
+
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
-      <article className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-12">
-        <Link href="/" className="text-sm font-semibold text-emerald-700">Thehrav</Link>
-        <h1 className="mt-6 text-4xl font-black tracking-tight">Privacy notice</h1>
+    <main className="min-h-screen bg-sand-50 px-5 py-12 text-slate-900">
+      <article className="mx-auto max-w-3xl rounded-[2rem] border border-sand-200 bg-white p-8 shadow-sm md:p-12">
+        <Link href="/" className="text-sm font-semibold text-leaf-700">Thehrav</Link>
+        <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-leaf-900">Privacy notice</h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">What you share here is about your mental health, and we treat it that way. We collect only what we need to run the service.</p>
         <div className="mt-8 space-y-6 text-sm leading-7 text-slate-700">
           <section><h2 className="text-lg font-bold">What we collect</h2><p className="mt-2">Your email, display name, and your confirmation that you are 18 or older; the support requests and messages you send; for guides, their qualifications and, for doctors and psychologists, their registered name and registration number, which patients can see; and reports and blocks.</p></section>

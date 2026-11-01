@@ -138,12 +138,14 @@ export default function PatientsPage() {
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div>
-                <label className="mb-3 block text-sm font-semibold text-slate-700">What kind of support do you need?</label>
-                <div className="grid gap-3 md:grid-cols-2">
+                <p id="support-type-label" className="mb-3 block text-sm font-semibold text-slate-700">What kind of support do you need?</p>
+                <div role="radiogroup" aria-labelledby="support-type-label" className="grid gap-3 md:grid-cols-2">
                   {SUPPORT_OPTIONS.map((option) => (
                     <button
                       type="button"
                       key={option}
+                      role="radio"
+                      aria-checked={selectedSupport === option}
                       onClick={() => setSelectedSupport(option)}
                       className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
                         selectedSupport === option
@@ -158,8 +160,9 @@ export default function PatientsPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">What would you like to share?</label>
+                <label htmlFor="request-message" className="mb-2 block text-sm font-semibold text-slate-700">What would you like to share?</label>
                 <textarea
+                  id="request-message"
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   rows={6}

@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { CRISIS_LINES } from "@/lib/safetyAndIdentity";
 
+export const metadata = {
+  title: "Community terms",
+  description: "The terms for members and guides on Thehrav.",
+};
+
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
-      <article className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-12">
-        <Link href="/" className="text-sm font-semibold text-emerald-700">Thehrav</Link>
-        <h1 className="mt-6 text-4xl font-black tracking-tight">Community terms</h1>
+    <main className="min-h-screen bg-sand-50 px-5 py-12 text-slate-900">
+      <article className="mx-auto max-w-3xl rounded-[2rem] border border-sand-200 bg-white p-8 shadow-sm md:p-12">
+        <Link href="/" className="text-sm font-semibold text-leaf-700">Thehrav</Link>
+        <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-leaf-900">Community terms</h1>
         <div className="mt-8 space-y-6 text-sm leading-7 text-slate-700">
           <section><h2 className="text-lg font-bold">Not emergency care</h2><p className="mt-2">Thehrav is not an emergency service, crisis line, diagnostic service, or substitute for a licensed treatment plan. If you may hurt yourself or someone else, contact local emergency services immediately. In India: {CRISIS_LINES}</p></section>
           <section><h2 className="text-lg font-bold">Adults only</h2><p className="mt-2">Thehrav is for people aged 18 or older. If you are under 18, please call Tele-MANAS on 14416 or talk to a trusted adult. Accounts found to belong to a minor will be closed.</p></section>
