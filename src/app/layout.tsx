@@ -34,7 +34,8 @@ const tiroDevanagari = Tiro_Devanagari_Hindi({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+  // Pages set their own name; the home page uses the default.
+  title: { default: `${SITE_NAME} | ${SITE_TAGLINE}`, template: `%s | ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   openGraph: {
     type: "website",

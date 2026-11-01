@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { BELIEF_NOTE, PRINCIPLES } from "@/lib/principles";
 
 export const metadata = {
-  title: "Our principles | Thehrav",
+  title: "Our principles",
   description: "The principles of compassion behind Thehrav, for people of every faith or none.",
 };
 

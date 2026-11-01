@@ -2,14 +2,19 @@ import Link from "next/link";
 
 const officerEmail = process.env.GRIEVANCE_OFFICER_EMAIL;
 
+export const metadata = {
+  title: "Delete your account",
+  description: "How to permanently delete your Thehrav account and what is deleted.",
+};
+
 // Public instructions for deleting a Thehrav account, as Google Play requires
 // for apps that let people create accounts.
 export default function DeleteAccountPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
-      <article className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-12">
-        <Link href="/" className="text-sm font-semibold text-emerald-700">Thehrav</Link>
-        <h1 className="mt-6 text-4xl font-black tracking-tight">Delete your Thehrav account</h1>
+    <main className="min-h-screen bg-sand-50 px-5 py-12 text-slate-900">
+      <article className="mx-auto max-w-3xl rounded-[2rem] border border-sand-200 bg-white p-8 shadow-sm md:p-12">
+        <Link href="/" className="text-sm font-semibold text-leaf-700">Thehrav</Link>
+        <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-leaf-900">Delete your Thehrav account</h1>
         <p className="mt-4 text-sm leading-7 text-slate-600">
           You can delete your account at any time, from the website or the Thehrav app. Deletion is permanent and can&apos;t be undone.
         </p>

@@ -26,7 +26,11 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const { pathname, search } = request.nextUrl;
-  if (!user && PROTECTED_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
+  // Only full page loads are redirected. In-app navigations and link prefetches
+  // (Sec-Fetch-Dest: empty) can't follow a redirect to another page, so they
+  // pass through and the page's SignInGuard sends the visitor to sign in.
+  const isPageLoad = request.headers.get("sec-fetch-dest") !== "empty";
+  if (!user && isPageLoad && PROTECTED_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
     const signInUrl = new URL("/auth", request.url);
     signInUrl.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(signInUrl);

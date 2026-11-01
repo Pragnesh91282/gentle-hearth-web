@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserRound } from "lucide-react";
-import NotificationToggle from "@/components/NotificationToggle";
+import NotificationToggle, { forgetThisDevice } from "@/components/NotificationToggle";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 
@@ -55,8 +55,10 @@ export default function AccountPage() {
         setError(result.error ?? "We could not delete your account. Please try again.");
         return;
       }
-      // The user no longer exists; clear the local session as well.
-      await createSupabaseBrowserClient()?.auth.signOut().catch(() => undefined);
+      // The account no longer exists, so sign out on this device only: asking
+      // the server to end a deleted user's session is refused.
+      await forgetThisDevice();
+      await createSupabaseBrowserClient()?.auth.signOut({ scope: "local" }).catch(() => undefined);
       router.push("/");
       router.refresh();
     } catch {
@@ -67,13 +69,13 @@ export default function AccountPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-12 text-slate-900">
+    <main className="min-h-screen bg-sand-50 px-5 py-12 text-slate-900">
       <div className="mx-auto max-w-2xl space-y-6">
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <section className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-sm">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-sand-100 text-leaf-700">
             <UserRound className="h-5 w-5" />
           </div>
-          <h1 className="text-3xl font-black tracking-tight">Your account</h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-leaf-900">Your account</h1>
           {member.status === "signed-in" && (
             <p className="mt-3 text-sm text-slate-600">Signed in as <span className="font-semibold">{member.profile.display_name}</span>.</p>
           )}
@@ -82,7 +84,7 @@ export default function AccountPage() {
           </p>
         </section>
 
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="rounded-[2rem] border border-sand-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-bold">Emails</h2>
           <label className="mt-4 flex items-start gap-3 text-sm leading-6 text-slate-700">
             <input
@@ -90,7 +92,7 @@ export default function AccountPage() {
               checked={emailNotifications ?? true}
               disabled={emailNotifications === null}
               onChange={(event) => void toggleEmails(event.target.checked)}
-              className="mt-1 h-4 w-4 accent-emerald-700"
+              className="mt-1 h-4 w-4 accent-leaf-700"
             />
             <span>
               Email me when there&apos;s a new message for me, at most once every few hours per conversation.

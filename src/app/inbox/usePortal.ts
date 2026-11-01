@@ -11,9 +11,14 @@ const CONVERSATION_COLUMNS = "id, request_id, patient_id, doctor_id, status, cre
 const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, created_at";
 
 // Alerts carry no message content, so nothing private shows on a lock screen.
-function notify(title: string) {
+// Alerts a guide in the background about a new request; replies and accepted
+// requests reach phones as push notifications (src/lib/push.ts). Shown through
+// the service worker, because Android does not allow `new Notification()`.
+function notifyNewRequest() {
   if (typeof Notification === "undefined" || Notification.permission !== "granted" || !document.hidden) return;
-  new Notification(title, { body: "Open Thehrav to read it.", tag: "thehrav" });
+  navigator.serviceWorker?.ready
+    .then((registration) => registration.showNotification("Thehrav", { body: "There's a new support request.", tag: "new-request", icon: "/icons/icon-192.png", badge: "/icons/badge-96.png", data: { url: "/inbox" } }))
+    .catch(() => undefined);
 }
 
 async function postJson(url: string, method: "POST" | "PATCH", body?: unknown) {
@@ -95,13 +100,10 @@ export function usePortal(me: Profile | null) {
     const channel = supabase
       .channel(`portal-${me.id}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "support_requests" }, (payload) => {
-        if (payload.eventType === "INSERT" && me.role === "doctor") {
-          notify("New support request");
-        }
+        if (payload.eventType === "INSERT" && me.role === "doctor") notifyNewRequest();
         scheduleRefresh();
       })
-      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, (payload) => {
-        if (payload.eventType === "INSERT" && me.role !== "doctor") notify("A guide has picked up your request");
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
         scheduleRefresh();
       })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, (payload) => {
@@ -113,7 +115,6 @@ export function usePortal(me: Profile | null) {
           if (incoming.conversation_id !== selectedIdRef.current || document.hidden) {
             setUnread((current) => ({ ...current, [incoming.conversation_id]: (current[incoming.conversation_id] ?? 0) + 1 }));
           }
-          notify("New message");
         }
       })
       .subscribe((status) => {

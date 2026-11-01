@@ -1,5 +1,10 @@
 import Logo from "@/components/Logo";
 
+export const metadata = {
+  title: "You’re offline",
+  robots: { index: false },
+};
+
 // Shown by the service worker (public/sw.js) when the app opens without a connection.
 export default function OfflinePage() {
   return (

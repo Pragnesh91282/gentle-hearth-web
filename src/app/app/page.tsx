@@ -1,7 +1,7 @@
 import AppHome from "./AppHome";
 
 export const metadata = {
-  title: "Thehrav",
+  title: { absolute: "Thehrav" },
   robots: { index: false },
 };
 

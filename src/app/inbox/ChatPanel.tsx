@@ -139,9 +139,9 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
 
   return (
     <div className="flex h-full min-h-[32rem] flex-col">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
+      <div className="flex items-center justify-between gap-3 border-b border-sand-200 pb-3">
         <div className="flex min-w-0 items-center gap-2">
-          <button type="button" onClick={onBack} aria-label="Back to conversations" className="rounded-full p-2 text-slate-500 hover:bg-slate-100 lg:hidden">
+          <button type="button" onClick={onBack} aria-label="Back to conversations" className="rounded-full p-2 text-slate-500 hover:bg-sand-100 lg:hidden">
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="min-w-0">
@@ -149,7 +149,7 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
             <p className="flex items-center gap-1.5 text-xs text-slate-500">
               {isActive ? (
                 <>
-                  <span className={`h-2 w-2 rounded-full ${otherOnline ? "bg-emerald-500" : "bg-slate-300"}`} />
+                  <span className={`h-2 w-2 rounded-full ${otherOnline ? "bg-leaf-700" : "bg-slate-300"}`} />
                   {otherOnline ? "Online now" : "Away — they'll see your message when they return"}
                 </>
               ) : (
@@ -159,12 +159,12 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button type="button" onClick={() => setReportTarget(null)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+          <button type="button" onClick={() => setReportTarget(null)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-sand-100 hover:text-slate-800">
             <Flag className="h-3.5 w-3.5" />
             Report
           </button>
           {isActive && !confirmingClose && (
-            <button type="button" onClick={() => setConfirmingClose(true)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+            <button type="button" onClick={() => setConfirmingClose(true)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-sand-100 hover:text-slate-800">
               End
             </button>
           )}
@@ -174,11 +174,11 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
       {guide && <GuideNotice guide={guide} isDoctor={isDoctor} />}
 
       {confirmingClose && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-sm">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-sand-200 bg-white p-3 text-sm">
           <span>End this conversation? Neither of you will be able to send more messages.</span>
           <div className="flex gap-2">
-            <button type="button" onClick={() => setConfirmingClose(false)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100">Keep talking</button>
-            <button type="button" onClick={() => void onClose().then(() => setConfirmingClose(false))} className="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">End conversation</button>
+            <button type="button" onClick={() => setConfirmingClose(false)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-sand-100">Keep talking</button>
+            <button type="button" onClick={() => void onClose().then(() => setConfirmingClose(false))} className="rounded-full bg-leaf-900 px-3 py-1.5 text-xs font-semibold text-white">End conversation</button>
           </div>
         </div>
       )}
@@ -205,13 +205,13 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
           const mine = message.sender_id === me.id;
           return (
             <div key={message.id} className={`group flex flex-col ${mine ? "items-end" : "items-start"}`}>
-              <div className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm leading-6 ${mine ? "bg-emerald-700 text-white" : "bg-white text-slate-800 shadow-sm"}`}>
+              <div className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm leading-6 ${mine ? "bg-leaf-700 text-white" : "bg-white text-slate-800 shadow-sm"}`}>
                 {message.body}
               </div>
               <div className="mt-1 flex items-center gap-2 px-1 text-[11px] text-slate-400">
                 <span>{mine ? "You" : counterpartName} · {formatTime(message.created_at)}</span>
                 {!mine && (
-                  <button type="button" onClick={() => setReportTarget(message.id)} className="opacity-0 transition hover:text-rose-600 focus:opacity-100 group-hover:opacity-100" aria-label="Report this message">
+                  <button type="button" onClick={() => setReportTarget(message.id)} className="rounded-full p-1.5 opacity-70 transition hover:text-rose-600 focus:opacity-100 group-hover:opacity-100 [@media(hover:hover)]:opacity-0" aria-label="Report this message">
                     <Flag className="h-3 w-3" />
                   </button>
                 )}
@@ -237,13 +237,13 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
             className="field resize-none"
             placeholder="Write a thoughtful reply — Enter to send, Shift+Enter for a new line"
           />
-          <button type="submit" disabled={isSending || !draft.trim()} aria-label="Send message" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50">
+          <button type="submit" disabled={isSending || !draft.trim()} aria-label="Send message" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-leaf-700 text-white hover:bg-leaf-800 disabled:opacity-50">
             <Send className="h-4 w-4" />
           </button>
         </form>
       ) : (
         <p className="mt-4 flex items-center gap-2 text-xs text-slate-500">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <CheckCircle2 className="h-4 w-4 text-leaf-700" />
           This conversation is closed. {isDoctor ? "" : "You can always send a new request if you need more support."}
         </p>
       )}
@@ -254,7 +254,7 @@ export default function ChatPanel({ me, conversation, counterpartName, messages,
 function GuideNotice({ guide, isDoctor }: { guide: GuideDetails; isDoctor: boolean }) {
   const { label, scope, registration } = GUIDE_TYPES[guide.guide_type];
   return (
-    <p className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3 text-xs leading-5 text-emerald-950">
+    <p className="mt-3 rounded-2xl border border-sand-200 bg-sand-100/70 p-3 text-xs leading-5 text-leaf-900">
       {isDoctor ? (
         <>You&apos;re supporting this member as a <span className="font-semibold">{label.toLowerCase()}</span>. {scope} Meet them with goodwill, and never promote any religion or belief.</>
       ) : (
@@ -298,13 +298,13 @@ function ReportForm({ conversationId, messageId, counterpartName, onDone }: {
   }
 
   if (status === "sent") {
-    return <p role="status" className="mt-3 rounded-2xl bg-emerald-50 p-3 text-sm text-emerald-900">Thank you. A moderator will review this privately.</p>;
+    return <p role="status" className="mt-3 rounded-2xl bg-sand-100 p-3 text-sm text-leaf-900">Thank you. A moderator will review this privately.</p>;
   }
 
   return (
     <form onSubmit={submit} className="mt-3 space-y-3 rounded-2xl border border-rose-200 bg-rose-50/60 p-4 text-sm">
       <p className="font-semibold text-rose-900">{messageId ? "Report this message" : "Report this conversation"}</p>
-      <textarea required rows={2} maxLength={1000} value={reason} onChange={(event) => setReason(event.target.value)} className="field" placeholder="What happened? Moderators only see what you share here and the reported message." />
+      <textarea aria-label="What happened?" required rows={2} maxLength={1000} value={reason} onChange={(event) => setReason(event.target.value)} className="field" placeholder="What happened? Moderators only see what you share here and the reported message." />
       <label className="flex items-start gap-2 text-slate-700">
         <input type="checkbox" checked={block} onChange={(event) => setBlock(event.target.checked)} className="mt-1 accent-rose-700" />
         Also block {counterpartName} and end this conversation
