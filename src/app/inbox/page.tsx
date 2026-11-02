@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MessageCircle, RefreshCw, ShieldCheck } from "lucide-react";
 import NotificationToggle from "@/components/NotificationToggle";
+import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import { useMember } from "@/lib/useMember";
 import type { Profile, SupportRequest } from "@/lib/types";
 import ChatPanel from "./ChatPanel";
@@ -56,6 +57,15 @@ function Portal({ me }: { me: Profile }) {
   const portal = usePortal(me);
   const [now, setNow] = useState(() => Date.now());
   const isDoctor = me.role === "doctor";
+  // A guide sent back for review (or rejected) can't see or accept requests.
+  const [guideStatus, setGuideStatus] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isDoctor) return;
+    void createSupabaseBrowserClient()?.from("doctor_profiles").select("verification_status").eq("user_id", me.id).maybeSingle()
+      .then(({ data }) => setGuideStatus(data?.verification_status ?? null));
+  }, [isDoctor, me.id]);
+  const underReview = isDoctor && guideStatus !== null && guideStatus !== "verified";
+  const waitingOnReply = !isDoctor && portal.requests.some((request) => request.status === "open");
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 60_000);
@@ -122,9 +132,22 @@ function Portal({ me }: { me: Profile }) {
                 <h2 className="text-lg font-bold">{isDoctor ? "Open requests" : "Your requests"}</h2>
                 {!isDoctor && <Link href="/patients" className="text-xs font-semibold text-leaf-700 hover:underline">New request</Link>}
               </div>
+              {underReview && (
+                <div role="status" className="mt-4 rounded-2xl border border-sand-200 bg-sand-100 p-4 text-sm leading-6 text-leaf-900">
+                  {guideStatus === "rejected"
+                    ? "Your last application wasn't approved, so you can't take requests right now. You can update it and resubmit."
+                    : "Your guide profile is being reviewed. You'll see open requests here again once a moderator has verified it."}
+                  <Link href="/doctors/apply" className="mt-2 block font-semibold underline">View your guide profile</Link>
+                </div>
+              )}
+              {waitingOnReply && (
+                <p className="mt-4 rounded-2xl bg-sand-100 p-4 text-sm leading-6 text-slate-700">
+                  While you wait: <Link href="/pause" className="font-semibold text-leaf-800 underline">take a breathing pause</Link> or <Link href="/ground" className="font-semibold text-leaf-800 underline">try grounding</Link>.
+                </p>
+              )}
               <div className="mt-4 max-h-[26rem] space-y-3 overflow-y-auto pr-1">
                 {portal.isLoading && <p className="text-sm text-slate-500">Loading…</p>}
-                {!portal.isLoading && portal.requests.length === 0 && (
+                {!portal.isLoading && !underReview && portal.requests.length === 0 && (
                   <p className="rounded-2xl bg-sand-50 p-4 text-sm leading-6 text-slate-600">
                     {isDoctor ? "No one is waiting right now. New requests will appear here instantly." : "No requests yet. When you send one, you'll see it here and get notified when a guide replies."}
                   </p>
@@ -232,7 +255,9 @@ function RequestCard({ request, now, isDoctor, onClaim, onWithdraw }: {
     <article className="rounded-2xl border border-sand-200 p-4">
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm font-semibold text-leaf-800">{request.support_type}</p>
-        <span className="shrink-0 rounded-full bg-sand-100 px-2 py-1 text-[10px] font-semibold uppercase text-slate-600">{request.status}</span>
+        <span className="shrink-0 rounded-full bg-sand-100 px-2 py-1 text-[10px] font-semibold uppercase text-slate-600">
+          {request.closed_reason === "expired" ? "Closed: no guide was free" : request.status}
+        </span>
       </div>
       <p className="mt-2 line-clamp-4 whitespace-pre-line text-sm leading-6 text-slate-700">{request.message}</p>
       <div className="mt-3 flex items-center justify-between gap-2">

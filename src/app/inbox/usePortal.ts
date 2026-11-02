@@ -6,7 +6,7 @@ import type { Conversation, Message, Profile, SupportRequest } from "@/lib/types
 
 export type LiveStatus = "connecting" | "live" | "offline";
 
-const REQUEST_COLUMNS = "id, patient_id, support_type, message, status, created_at";
+const REQUEST_COLUMNS = "id, patient_id, support_type, message, status, closed_reason, created_at";
 const CONVERSATION_COLUMNS = "id, request_id, patient_id, doctor_id, status, created_at, support_requests(support_type)";
 const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, created_at";
 

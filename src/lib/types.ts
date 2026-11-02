@@ -14,6 +14,8 @@ export type SupportRequest = {
   support_type: string;
   message: string;
   status: "open" | "claimed" | "closed";
+  // "expired" when it closed after a week with no reply.
+  closed_reason: string | null;
   created_at: string;
 };
 
