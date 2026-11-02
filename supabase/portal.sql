@@ -217,3 +217,8 @@ revoke all on public.push_subscriptions from anon, authenticated;
 -- quick back-and-forth doesn't buzz their phone for every message.
 alter table public.conversations add column if not exists patient_pushed_at timestamptz;
 alter table public.conversations add column if not exists doctor_pushed_at timestamptz;
+
+-- Caring for waiting requests (src/lib/waiting.ts): one check-in after a day
+-- without a reply, and a kind close after a week.
+alter table public.support_requests add column if not exists checkin_sent_at timestamptz;
+alter table public.support_requests add column if not exists closed_reason text;

@@ -216,9 +216,18 @@ export default function PatientsPage() {
             {crisisMessage && <div className="mt-6"><CrisisResources message={crisisMessage} /></div>}
 
             {submitted && (
-              <div className="mt-6 rounded-2xl border border-sand-200 bg-sand-100 p-4 text-sm text-leaf-900">
-                Your request was sent. Verified guides see it right away, and you&apos;ll get a live notification in your inbox when one of them replies.
-                <Link href="/inbox" className="mt-3 inline-flex font-semibold text-leaf-800 underline">Open your live inbox</Link>
+              <div role="status" className="mt-6 rounded-3xl border border-sand-200 bg-sand-100 p-5 text-leaf-900">
+                <p className="font-display text-xl font-semibold">Your request was sent. Your words are safe with us.</p>
+                <p className="mt-2 text-sm leading-6 text-slate-700">
+                  Guides give their time freely, so a reply can take a little while, sometimes a day or two. We&apos;ll let you know by email, and on your phone if notifications are on. If no one has replied in a day, we&apos;ll check in with you.
+                </p>
+                <p className="mt-4 text-sm font-semibold">While you wait</p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  <Link href="/pause" className="rounded-2xl border border-sand-200 bg-white px-4 py-3 text-sm font-semibold text-leaf-800 hover:border-leaf-700">Take a breathing pause</Link>
+                  <Link href="/ground" className="rounded-2xl border border-sand-200 bg-white px-4 py-3 text-sm font-semibold text-leaf-800 hover:border-leaf-700">Try 5-4-3-2-1 grounding</Link>
+                </div>
+                <p className="mt-4 text-xs leading-5 text-slate-600">If you need someone right now, call Tele-MANAS on 14416 (free, 24/7), or 112 in an emergency.</p>
+                <Link href="/inbox" className="mt-3 inline-flex text-sm font-semibold text-leaf-800 underline">Open your inbox</Link>
               </div>
             )}
           </section>

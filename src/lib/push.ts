@@ -39,6 +39,18 @@ export async function sendPush(admin: SupabaseClient, recipientId: string, conve
     .select("id");
   if (!claimed?.length) return;
 
+  await deliverPush(admin, subscriptions, message);
+}
+
+// Sends a phone notification to every device a member turned them on for,
+// without the per-conversation limit (for occasional notes like check-ins).
+export async function sendPushToMember(admin: SupabaseClient, recipientId: string, message: PushMessage) {
+  if (!configure()) return;
+  const { data: subscriptions } = await admin.from("push_subscriptions").select("endpoint, p256dh, auth").eq("user_id", recipientId);
+  if (subscriptions?.length) await deliverPush(admin, subscriptions, message);
+}
+
+async function deliverPush(admin: SupabaseClient, subscriptions: { endpoint: string; p256dh: string; auth: string }[], message: PushMessage) {
   const payload = JSON.stringify(message);
   await Promise.all(subscriptions.map(async ({ endpoint, p256dh, auth }) => {
     try {

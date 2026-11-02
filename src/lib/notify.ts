@@ -65,11 +65,7 @@ export async function notifyParticipant(admin: SupabaseClient, conversationId: s
 }
 
 async function sendEmail(admin: SupabaseClient, conversationId: string, recipientId: string, recipientRole: Role, kind: Kind) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return;
-
-  const { data: profile } = await admin.from("profiles").select("email_notifications").eq("id", recipientId).maybeSingle();
-  if (profile?.email_notifications === false) return;
+  if (!process.env.RESEND_API_KEY) return;
 
   // Claims the send slot atomically, so two quick messages can't both email.
   const column = recipientRole === "patient" ? "patient_notified_at" : "doctor_notified_at";
@@ -82,25 +78,45 @@ async function sendEmail(admin: SupabaseClient, conversationId: string, recipien
     .select("id");
   if (!claimed?.length) return;
 
+  await deliverEmail(admin, recipientId, {
+    subject: kind === "accepted" ? `Your request on ${SITE_NAME} has been picked up` : `New message on ${SITE_NAME}`,
+    lead: kind === "accepted"
+      ? "A guide has picked up your request and started a conversation with you."
+      : "There's a new message in one of your conversations.",
+    follow: `Open ${SITE_NAME} to read it, whenever you're ready.`,
+    button: { label: "Open your inbox", url: `${SITE_URL}/inbox` },
+  });
+}
+
+export type EmailContent = {
+  subject: string;
+  lead: string;
+  follow: string;
+  button: { label: string; url: string };
+};
+
+// Sends one email to a member, unless they turned emails off. Emails never
+// contain message text, and subjects never mention mental health.
+export async function deliverEmail(admin: SupabaseClient, recipientId: string, content: EmailContent) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+
+  const { data: profile } = await admin.from("profiles").select("email_notifications").eq("id", recipientId).maybeSingle();
+  if (profile?.email_notifications === false) return;
+
   const { data: { user } } = await admin.auth.admin.getUserById(recipientId);
   if (!user?.email) return;
 
-  const subject = kind === "accepted" ? `Your request on ${SITE_NAME} has been picked up` : `New message on ${SITE_NAME}`;
-  const lead = kind === "accepted"
-    ? "A guide has picked up your request and started a conversation with you."
-    : "There's a new message in one of your conversations.";
-  const inboxUrl = `${SITE_URL}/inbox`;
   const optOut = unsubscribeUrl(recipientId);
-
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: FROM,
       to: user.email,
-      subject,
-      text: `${lead}\n\nOpen ${SITE_NAME} to read it, whenever you're ready: ${inboxUrl}\n\nFor your privacy, we never put messages in emails.\n\nDon't want these emails? Turn them off: ${optOut}`,
-      html: emailHtml(lead, inboxUrl, optOut),
+      subject: content.subject,
+      text: `${content.lead}\n\n${content.follow}\n${content.button.label}: ${content.button.url}\n\nFor your privacy, we never put messages in emails.\n\nDon't want these emails? Turn them off: ${optOut}`,
+      html: emailHtml(content, optOut),
       headers: {
         "List-Unsubscribe": `<${optOut}>`,
         "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
@@ -108,19 +124,19 @@ async function sendEmail(admin: SupabaseClient, conversationId: string, recipien
     }),
   });
   if (!response.ok) {
-    console.error("Reply email failed", response.status, await response.text().catch(() => ""));
+    console.error("Email failed", response.status, await response.text().catch(() => ""));
   }
 }
 
-export function emailHtml(lead: string, inboxUrl: string, optOut: string) {
-  return `<!doctype html><html><body style="margin:0;background:#f4faf6;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f172a">
+export function emailHtml({ lead, follow, button }: Omit<EmailContent, "subject">, optOut: string) {
+  return `<!doctype html><html><body style="margin:0;background:#fdfaf4;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f172a">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #d1fae5;border-radius:20px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #ede1cb;border-radius:20px">
 <tr><td style="padding:32px">
-<p style="margin:0 0 20px;font-size:20px;font-weight:700;color:#065f46">${SITE_NAME}</p>
+<p style="margin:0 0 20px;font-family:Georgia,serif;font-size:22px;font-weight:700;color:#12372a">${SITE_NAME}</p>
 <p style="margin:0 0 12px;font-size:16px;line-height:1.6">${lead}</p>
-<p style="margin:0 0 24px;font-size:16px;line-height:1.6">Open ${SITE_NAME} to read it, whenever you're ready.</p>
-<a href="${inboxUrl}" style="display:inline-block;background:#047857;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 24px;border-radius:999px">Open your inbox</a>
+<p style="margin:0 0 24px;font-size:16px;line-height:1.6">${follow}</p>
+<a href="${button.url}" style="display:inline-block;background:#1f5c46;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 24px;border-radius:999px">${button.label}</a>
 <p style="margin:28px 0 0;font-size:13px;line-height:1.6;color:#64748b">For your privacy, we never put messages in emails.<br><a href="${optOut}" style="color:#64748b">Turn off these emails</a></p>
 </td></tr></table></td></tr></table></body></html>`;
 }
